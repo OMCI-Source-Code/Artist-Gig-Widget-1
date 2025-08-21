@@ -67,5 +67,3 @@ export default function WidgetArtist() {
     </div>
   );
 }
-// Note: This component assumes the API endpoint fetchArtistGigs is defined in api.js
-// and returns gigs for a specific artist based on the artistId query parameter.    

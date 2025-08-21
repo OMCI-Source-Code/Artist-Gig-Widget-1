@@ -6,6 +6,7 @@ import { fileURLToPath } from "url";
 
 import gigsRouter from "./routes/gigs.js";
 import authRouter from "./routes/auth.js";
+import artistsRouter from "./routes/artists.js";
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use(express.json());
 // Routes
 app.use("/api/gigs", gigsRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/artists", artistsRouter);
 
 // Serve frontend
 app.use(express.static(distPath));
