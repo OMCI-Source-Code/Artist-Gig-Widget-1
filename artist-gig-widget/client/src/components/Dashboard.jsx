@@ -67,7 +67,9 @@ function Inner() {
             onSave={(body) =>
               editing ? handleUpdate(editing.id, body) : handleCreate(body)
             }
+            onCancel={() => setEditing(null)}   // ✅ allow cancel
           />
+
         </div>
 
         <div>
