@@ -88,4 +88,21 @@ router.delete("/:id", authMiddleware, async (req, res) => {
   }
 });
 
+// ✅ Public: all gigs (for global widget)
+router.get("/public", async (req, res) => {
+  try {
+    const { rows } = await query(
+      `SELECT gigs.*, artists.name AS artist_name
+       FROM gigs
+       JOIN artists ON gigs.artist_id = artists.id
+       WHERE gigs.private = false
+       ORDER BY date_time ASC`
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error("Error fetching public gigs:", err);
+    res.status(500).json({ error: "Failed to fetch gigs" });
+  }
+});
+
 export default router;

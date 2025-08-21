@@ -20,7 +20,7 @@ const __dirname = path.dirname(__filename);
 const distPath = path.resolve(__dirname, "../../client/dist");
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: "*" })); 
 app.use(express.json());
 
 // Routes

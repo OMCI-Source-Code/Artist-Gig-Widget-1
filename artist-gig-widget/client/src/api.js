@@ -59,6 +59,7 @@ export const createGig       = (gig) => apiFetch("/gigs", { method: "POST", body
 export const updateGig       = (id, updates) => apiFetch(`/gigs/${id}`, { method: "PUT", body: JSON.stringify(updates) });
 export const deleteGig       = (id) => apiFetch(`/gigs/${id}`, { method: "DELETE" });
 export const fetchArtist     = (id) => apiFetch(`/artists/${id}`);
+export const fetchPublicGigs = () => apiFetch("/gigs/public");
 
 export const register        = (artist) => apiFetch("/auth/register", { method: "POST", body: JSON.stringify(artist) });
 export const login           = (creds)  => apiFetch("/auth/login", { method: "POST", body: JSON.stringify(creds) });

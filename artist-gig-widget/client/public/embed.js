@@ -15,7 +15,7 @@
       // API endpoint: either provided by host page or default to same origin /api
       const apiOrigin =
         window.GIG_WIDGET_API ||
-        origin.replace(/\/$/, "") + "/api";
+         origin.replace(/\/$/, "") + "/api";
 
       // Construct iframe src with API included
       const src =
