@@ -1,0 +1,160 @@
+/* Dashboard container */
+.dashboard {
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 1rem;
+  font-family: "Inter", system-ui, sans-serif;
+  color: #fff; /* white text */
+  background: #000; /* black background */
+}
+
+/* Headings */
+.dashboard h2 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(90deg, #d9ae4c, #fff); /* gold to white gradient */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.dashboard h3 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: #d9ae4c; /* gold */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dashboard h3::before {
+  content: "🎵";
+  font-size: 1.1rem;
+}
+
+/* Artist info card */
+.artist-info {
+  background: #111; /* dark */
+  border: 1px solid #d9ae4c;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  color: #fff;
+}
+
+/* Layout grid */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 1.5rem;
+}
+
+/* Card wrapper */
+.card {
+  background: #111;
+  border-radius: 14px;
+  box-shadow: 0 6px 16px rgba(217, 174, 76, 0.25); /* soft gold glow */
+  padding: 1.25rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid #333;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(217, 174, 76, 0.35);
+}
+
+/* Gigs list */
+.gigs-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.gig-item {
+  border: 1px solid #d9ae4c;
+  border-radius: 12px;
+  padding: 1rem;
+  background: #1a1a1a;
+  transition: all 0.15s ease;
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+}
+
+.gig-item:hover {
+  background: #222;
+}
+
+.gig-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gig-title {
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: #d9ae4c; /* gold titles */
+}
+
+.gig-meta {
+  font-size: 0.85rem;
+  color: #aaa;
+  margin-top: 0.25rem;
+}
+
+.gig-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-right: 0.75rem;
+}
+
+/* Buttons */
+button {
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+button.edit-btn {
+  background: #d9ae4c; /* gold */
+  color: #000;
+}
+
+button.delete-btn {
+  background: #dc2626; /* red */
+  color: #fff;
+}
+
+button.cancel-btn {
+  background: #444;
+  color: #fff;
+  border: 1px solid #666;
+}
+
+/* Embed snippet */
+pre {
+  background: #000;
+  color: #d9ae4c;
+  padding: 1rem;
+  border-radius: 10px;
+  overflow-x: auto;
+  font-size: 0.9rem;
+  border: 1px solid #d9ae4c;
+}
+pre code {
+  font-family: "Fira Code", monospace;
+  line-height: 1.5;
+}

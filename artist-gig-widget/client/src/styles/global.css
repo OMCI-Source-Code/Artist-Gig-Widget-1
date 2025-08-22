@@ -1,0 +1,90 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  background-color: #000; /* black background for the whole screen */
+  color: #fff; /* default text color */
+}
+
+
+/* Global container */
+.container {
+  font-family: system-ui, sans-serif;
+  padding: 16px;
+  max-width: 960px;
+  margin: 0 auto;
+  background-color: #000; /* black background */
+  color: #fff; /* default white text */
+}
+
+/* Navigation */
+.navbar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  background: #000;
+  padding: 12px 0;
+}
+
+/* Nav links */
+.navbar a {
+  text-decoration: none;
+  color: #d9ae4c; /* gold */
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.navbar a:hover {
+  color: #fff; /* hover white */
+}
+
+/* Headings */
+h1, h2, h3 {
+  color: #d9ae4c;
+  margin-top: 0.5em;
+}
+
+/* Buttons */
+button {
+  background: #d9ae4c;
+  color: #000;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+button:hover {
+  background: #c0963d; /* slightly darker gold */
+}
+
+/* Inputs + textarea */
+input, textarea {
+  border: 1px solid #d9ae4c;
+  border-radius: 6px;
+  padding: 8px;
+  background: #111; /* dark gray */
+  color: #fff;
+  width: 100%;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: #fff;
+}
+
+/* Checkbox label */
+label {
+  color: #fff;
+}
+
+/* Code snippets */
+code, pre {
+  background: #111;
+  color: #d9ae4c;
+  padding: 8px;
+  border-radius: 6px;
+  display: block;
+  overflow-x: auto;
+}

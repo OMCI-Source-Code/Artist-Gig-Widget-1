@@ -1,0 +1,135 @@
+/* =========================
+   Widget container
+   ========================= */
+.gig-widget {
+  max-width: 960px;      /* tighter container */
+  margin: 2rem auto;     /* center horizontally */
+  padding: 1rem 1.5rem;  /* compact padding */
+}
+
+/* Grid layout */
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); /* auto-fit cards */
+  gap: 1.5rem;
+  justify-content: center;  /* center cards in container */
+  align-items: stretch;     /* equal height cards */
+}
+
+/* Individual card */
+.gig-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;  /* push footer to bottom */
+  background: rgba(20,20,20,0.85);
+  color: #fff !important;
+  border: 1px solid rgba(217,174,76,0.4);
+  border-radius: 14px;
+  padding: 1rem 1.2rem;
+  max-width: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+}
+
+/* Card hover */
+.gig-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 30px rgba(217,174,76,0.6), 0 0 16px rgba(255,220,102,0.4);
+  border-color: #d9ae4c;
+}
+
+/* Card content */
+.card-content {
+  flex-grow: 1;  /* ensures equal height cards */
+}
+
+/* Card title */
+.gig-title {
+  font-size: 1.2rem;
+  color: #fff;  /* pure white */
+  margin-bottom: 0.4rem;
+  line-height: 1.2;
+  text-shadow: 0 0 2px #d9ae4c;
+  animation: neonPulse 2s infinite alternate;
+}
+
+/* Card info text */
+.gig-datetime,
+.gig-artist,
+.gig-description {
+  margin: 0.2rem 0;
+  color: #fff;  /* pure white */
+  line-height: 1.4;
+}
+
+/* Card footer link */
+.card-footer a {
+  display: inline-block;
+  margin-top: 0.4rem;
+  color: #d9ae4c;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+  animation: neonPulse 2s infinite alternate;
+}
+
+.card-footer a:hover {
+  color: #fff;
+  text-shadow: 0 0 10px #d9ae4c, 0 0 20px #ffd966;
+}
+
+/* Neon pulse animation */
+@keyframes neonPulse {
+  0%, 100% { text-shadow: 0 0 2px #d9ae4c, 0 0 4px #ffd966; }
+  50% { text-shadow: 0 0 8px #d9ae4c, 0 0 16px #ffd966; }
+}
+
+/* Loading & empty states */
+.loading, .empty {
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 2rem 0;
+  color: #888;
+}
+
+.gig-card a {
+  color: #d9ae4c !important;
+}
+
+.gig-card a:hover {
+  color: #fff !important;
+  text-shadow: 0 0 12px #d9ae4c, 0 0 24px #ffd966 !important;
+}
+
+/* Force all text inside cards (except links) to pure white with subtle glow */
+.gig-card :where(:not(a)) {
+  color: #fff !important;
+  text-shadow: 
+    0 0 2px #fff,      /* tiny white glow for readability */
+    0 0 4px #d9ae4c,   /* soft gold neon glow */
+    0 0 6px #ffd966;   /* subtle extended glow */
+}
+
+/* Optional: stronger glow for artist/date lines */
+.gig-artist,
+.gig-datetime {
+  text-shadow:
+    0 0 3px #fff,
+    0 0 6px #d9ae4c,
+    0 0 12px #ffd966;
+  font-weight: 500;
+}
+
+/* Description slightly subtler */
+.gig-description {
+  text-shadow:
+    0 0 1px #fff,
+    0 0 3px #d9ae4c;
+}
+
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  .gig-card { padding: 0.8rem 1rem; }
+  .gig-title { font-size: 1.1rem; }
+  .gig-datetime, .gig-artist, .gig-description { font-size: 0.95rem; }
+}

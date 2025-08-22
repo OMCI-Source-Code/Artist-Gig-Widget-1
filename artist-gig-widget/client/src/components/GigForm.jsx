@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "../styles/gigForm.css";
 
 export default function GigForm({ initial = {}, onSave, onCancel }) {
   const emptyForm = {
@@ -12,7 +13,6 @@ export default function GigForm({ initial = {}, onSave, onCancel }) {
 
   const [form, setForm] = useState(emptyForm);
 
-  // 👇 load initial data into form when editing
   useEffect(() => {
     if (initial && Object.keys(initial).length > 0) {
       setForm({
@@ -41,45 +41,65 @@ export default function GigForm({ initial = {}, onSave, onCancel }) {
     const body = { ...form, date_time: new Date(form.date_time).toISOString() };
 
     try {
-      await onSave(body); // wait for save/update to succeed
-      resetForm();        // reset fields
+      await onSave(body);
+      resetForm();
     } catch (err) {
       console.error("Save failed:", err);
     }
   }
 
   return (
-    <form onSubmit={submit} style={{ display: "grid", gap: 8 }}>
-      <input
-        placeholder="Title"
-        value={form.title}
-        onChange={(e) => update("title", e.target.value)}
-        required
-      />
-      <input
-        type="datetime-local"
-        value={form.date_time}
-        onChange={(e) => update("date_time", e.target.value)}
-        required
-      />
-      <input
-        placeholder="Venue"
-        value={form.venue}
-        onChange={(e) => update("venue", e.target.value)}
-        required
-      />
-      <textarea
-        placeholder="Description"
-        value={form.description}
-        onChange={(e) => update("description", e.target.value)}
-        rows={3}
-      />
-      <input
-        placeholder="Link (optional)"
-        value={form.link}
-        onChange={(e) => update("link", e.target.value)}
-      />
-      <label style={{ display: "flex", alignItems: "center", gap: 6 }}>
+    <form className="gig-form" onSubmit={submit}>
+      <label>
+        Title
+        <input
+          placeholder="Summer Festival"
+          value={form.title}
+          onChange={(e) => update("title", e.target.value)}
+          required
+        />
+      </label>
+
+      <label>
+        Date & Time
+        <input
+          type="datetime-local"
+          value={form.date_time}
+          onChange={(e) => update("date_time", e.target.value)}
+          required
+        />
+      </label>
+
+      <label>
+        Venue
+        <input
+          placeholder="Madison Square Garden"
+          value={form.venue}
+          onChange={(e) => update("venue", e.target.value)}
+          required
+        />
+      </label>
+
+      <label>
+        Description
+        <textarea
+          placeholder="Short details about the gig..."
+          value={form.description}
+          onChange={(e) => update("description", e.target.value)}
+          rows={3}
+        />
+      </label>
+
+      <label>
+        Ticket/Info Link
+        <input
+          placeholder="https://example.com"
+          value={form.link}
+          onChange={(e) => update("link", e.target.value)}
+        />
+      </label>
+
+      <label className="checkbox">
         <input
           type="checkbox"
           checked={form.private}
@@ -88,16 +108,17 @@ export default function GigForm({ initial = {}, onSave, onCancel }) {
         Private (show only on your widget)
       </label>
 
-      <div style={{ display: "flex", gap: 8 }}>
-        <button type="submit">
+      <div className="actions">
+        <button type="submit" className="save">
           {initial?.id ? "Update" : "Save"}
         </button>
         {initial?.id && (
           <button
             type="button"
+            className="cancel"
             onClick={() => {
               resetForm();
-              onCancel?.(); // notify parent to exit edit mode
+              onCancel?.();
             }}
           >
             Cancel
