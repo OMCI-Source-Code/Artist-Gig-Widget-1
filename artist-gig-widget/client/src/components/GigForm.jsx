@@ -91,7 +91,7 @@ export default function GigForm({ initial = {}, onSave, onCancel }) {
       </label>
 
       <label>
-        Ticket/Info Link
+        Ticket/Info Link(Optional)
         <input
           placeholder="https://example.com"
           value={form.link}

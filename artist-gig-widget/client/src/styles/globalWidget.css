@@ -109,23 +109,6 @@
     0 0 6px #ffd966;   /* subtle extended glow */
 }
 
-/* Optional: stronger glow for artist/date lines */
-.gig-artist,
-.gig-datetime {
-  text-shadow:
-    0 0 3px #fff,
-    0 0 6px #d9ae4c,
-    0 0 12px #ffd966;
-  font-weight: 500;
-}
-
-/* Description slightly subtler */
-.gig-description {
-  text-shadow:
-    0 0 1px #fff,
-    0 0 3px #d9ae4c;
-}
-
 
 /* Responsive tweaks */
 @media (max-width: 600px) {

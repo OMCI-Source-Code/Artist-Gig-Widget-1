@@ -111,9 +111,7 @@ function Inner() {
       <pre>{`<div data-gig-widget data-type="artist" data-artist-id="${artist?.id}" data-view="list"></div>
 <script src="${window.location.origin}/embed.js"></script>`}</pre>
 
-      <p>Global widget:</p>
-      <pre>{`<div data-gig-widget data-type="global" data-view="calendar"></div>
-<script src="${window.location.origin}/embed.js"></script>`}</pre>
+      
     </div>
   );
 }

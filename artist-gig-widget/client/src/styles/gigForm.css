@@ -1,85 +1,248 @@
+/* =========================
+   Gig Form Container
+   ========================= */
 .gig-form {
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  background: #000; /* black background */
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.6);
-  border: 1px solid #d9ae4c; /* gold border */
+  gap: 1.5rem;
+  background: rgba(10,10,10,0.95);
+  padding: 2rem;
+  border-radius: 14px;
+  box-shadow: 0 4px 20px rgba(217,174,76,0.3), 0 0 10px rgba(255,220,102,0.2);
+  border: 1px solid #d9ae4c;
+  transition: box-shadow 0.3s ease;
 }
 
+.gig-form:hover {
+  box-shadow: 0 6px 30px rgba(217,174,76,0.5), 0 0 14px rgba(255,220,102,0.3);
+}
+
+/* =========================
+   Labels
+   ========================= */
 .gig-form label {
   display: flex;
   flex-direction: column;
   font-weight: 600;
-  color: #d9ae4c; /* gold labels */
+  color: #d9ae4c;
   font-size: 0.95rem;
-  gap: 0.3rem;
+  gap: 0.5rem; /* proper spacing from input */
 }
 
+/* Checkbox labels */
+.gig-form label.checkbox {
+  flex-direction: row;
+  align-items: right;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  font-weight: normal;
+  color: #fff;
+}
+
+/* =========================
+   Inputs & Textarea
+   ========================= */
 .gig-form input,
 .gig-form textarea {
   width: 100%;
-  padding: 0.6rem 0.8rem;
-  border: 1px solid #d9ae4c; /* gold border */
-  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  margin-top: 0.2rem;
+  border: 1px solid #d9ae4c;
+  border-radius: 10px;
   font-size: 0.95rem;
-  background: #111; /* dark gray input bg */
-  color: #fff; /* white text */
-  transition: border 0.2s, box-shadow 0.2s;
+  background: #111;
+  color: #fff;
+  box-sizing: border-box;
+  transition: border 0.2s, box-shadow 0.3s ease, transform 0.2s;
 }
 
+/* Inputs focus glow */
 .gig-form input:focus,
 .gig-form textarea:focus {
-  border-color: #fff; /* white when focused */
+  border-color: #fff;
   outline: none;
-  box-shadow: 0 0 0 2px rgba(217,174,76,0.4); /* gold glow */
+  box-shadow: 0 0 8px rgba(217,174,76,0.6);
+  transform: scale(1.01);
 }
 
-.gig-form label.checkbox {
-  flex-direction: row;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: normal;
-  color: #fff; /* checkbox label white */
+/* =========================
+   Date & Time picker styling
+   ========================= */
+.gig-form input[type="date"],
+.gig-form input[type="time"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  position: relative;
+  padding: 0.85rem 2.5rem 0.85rem 1rem;
+  border-radius: 10px;
+  border: 1px solid #d9ae4c;
+  background: #111;
+  color: #fff;
+  font-size: 0.95rem;
 }
 
+/* Custom white icons using pseudo-elements */
+.gig-form input[type="date"]::after,
+.gig-form input[type="time"]::after {
+  content: '';
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.2rem;
+  height: 1.2rem;
+  background-repeat: no-repeat;
+  background-size: contain;
+  pointer-events: none;
+}
+
+/* Date input icon */
+.gig-form input[type="date"]::after {
+  background-image: url("data:image/svg+xml,%3Csvg fill='%23fff' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM7 11h5v5H7z'/%3E%3C/svg%3E");
+}
+
+/* Time input icon */
+.gig-form input[type="time"]::after {
+  background-image: url("data:image/svg+xml,%3Csvg fill='%23fff' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1a11 11 0 1 0 11 11A11 11 0 0 0 12 1zm0 20a9 9 0 1 1 9-9 9 9 0 0 1-9 9zm.5-9.5V7h-1v5h5v-1z'/%3E%3C/svg%3E");
+}
+
+/* Animate icons on focus */
+.gig-form input[type="date"]:focus::after,
+.gig-form input[type="time"]:focus::after {
+  animation: iconPulse 1s infinite alternate;
+}
+
+/* Hide native calendar/time picker icons */
+.gig-form input[type="date"]::-webkit-calendar-picker-indicator,
+.gig-form input[type="time"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    display: none;
+    -webkit-appearance: none;
+}
+
+/* Add a custom white icon with a pseudo-element */
+.gig-form input[type="date"],
+.gig-form input[type="time"] {
+    position: relative;
+    padding-right: 2.5rem; /* space for custom icon */
+}
+
+/* Custom icon for date */
+.gig-form input[type="date"]::after {
+    content: "";
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.2rem;
+    height: 1.2rem;
+    background-image: url("data:image/svg+xml,%3Csvg fill='%23fff' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM7 11h5v5H7z'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    pointer-events: none;
+}
+
+/* Custom icon for time */
+.gig-form input[type="time"]::after {
+    content: "";
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.2rem;
+    height: 1.2rem;
+    background-image: url("data:image/svg+xml,%3Csvg fill='%23fff' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1a11 11 0 1 0 11 11A11 11 0 0 0 12 1zm0 20a9 9 0 1 1 9-9 9 9 0 0 1-9 9zm.5-9.5V7h-1v5h5v-1z'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    pointer-events: none;
+}
+
+/* Optional: animate the custom icon on focus */
+.gig-form input[type="date"]:focus::after,
+.gig-form input[type="time"]:focus::after {
+    animation: iconPulse 1s infinite alternate;
+}
+
+@keyframes iconPulse {
+    0% { transform: translateY(-50%) scale(1); filter: drop-shadow(0 0 4px #d9ae4c); }
+    50% { transform: translateY(-50%) scale(1.05); filter: drop-shadow(0 0 8px #ffd966); }
+    100% { transform: translateY(-50%) scale(1); filter: drop-shadow(0 0 4px #d9ae4c); }
+}
+
+
+/* Icon pulse keyframes */
+@keyframes iconPulse {
+  0% { transform: translateY(-50%) scale(1); filter: drop-shadow(0 0 4px #d9ae4c); }
+  50% { transform: translateY(-50%) scale(1.05); filter: drop-shadow(0 0 8px #ffd966); }
+  100% { transform: translateY(-50%) scale(1); filter: drop-shadow(0 0 4px #d9ae4c); }
+}
+
+/* =========================
+   Buttons
+   ========================= */
 .gig-form .actions {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.75rem;
   margin-top: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .gig-form button {
-  padding: 0.6rem 1rem;
+  padding: 0.65rem 1.2rem;
   font-size: 0.95rem;
   font-weight: 600;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
   border: none;
-  transition: background 0.2s, transform 0.1s;
-}
-
-.gig-form button:hover {
-  transform: translateY(-2px);
+  transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
 }
 
 .gig-form button.save {
-  background: #d9ae4c; /* gold */
+  background: linear-gradient(145deg, #d9ae4c, #ffd966);
   color: #000;
+  box-shadow: 0 2px 6px rgba(217,174,76,0.4);
 }
 
 .gig-form button.save:hover {
-  background: #c0963d; /* darker gold */
+  background: linear-gradient(145deg, #c0963d, #ffd966);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(217,174,76,0.6);
 }
 
 .gig-form button.cancel {
-  background: #222; /* dark gray */
+  background: #222;
   color: #fff;
   border: 1px solid #555;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.5);
 }
 
 .gig-form button.cancel:hover {
   background: #333;
+  transform: translateY(-1px);
+}
+
+/* =========================
+   Placeholder text
+   ========================= */
+.gig-form input::placeholder,
+.gig-form textarea::placeholder {
+  color: #aaa;
+  opacity: 0.8;
+}
+
+
+
+/* =========================
+   Responsive tweaks
+   ========================= */
+@media (max-width: 600px) {
+  .gig-form {
+    padding: 1.5rem;
+  }
+
+  .gig-form .actions {
+    flex-direction: column;
+  }
 }
