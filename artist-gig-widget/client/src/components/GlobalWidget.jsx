@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { fetchPublicGigs } from "../api";
+import "../styles/widget.css";
 
 export default function WidgetGlobal() {
   const location = useLocation();
