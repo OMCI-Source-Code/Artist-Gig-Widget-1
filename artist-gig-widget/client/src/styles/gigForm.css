@@ -218,10 +218,6 @@
   box-shadow: 0 1px 4px rgba(0,0,0,0.5);
 }
 
-.gig-form button.cancel:hover {
-  background: #333;
-  transform: translateY(-1px);
-}
 
 /* =========================
    Placeholder text
