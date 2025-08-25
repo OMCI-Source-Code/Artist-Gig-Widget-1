@@ -4,20 +4,16 @@
     containers.forEach(function (el) {
       const type = el.getAttribute("data-type") || "artist";
       const artistId = el.getAttribute("data-artist-id") || "";
-      const view = el.getAttribute("data-view") || "list";
+      const view = el.getAttribute("data-view") || "card";
 
-      // Auto-detect origin of this embed.js
       const script =
         document.currentScript ||
         document.querySelector('script[src*="embed.js"]');
       const origin = new URL(script.src).origin;
 
-      // API endpoint: either provided by host page or default to same origin /api
       const apiOrigin =
-        window.GIG_WIDGET_API ||
-         origin.replace(/\/$/, "") + "/api";
+        window.GIG_WIDGET_API || origin.replace(/\/$/, "") + "/api";
 
-      // Construct iframe src with API included
       const src =
         type === "artist"
           ? `${origin}/#/widget/artist?artistId=${encodeURIComponent(
@@ -33,12 +29,23 @@
       iframe.src = src;
       iframe.style.width = "100%";
       iframe.style.border = "0";
+      iframe.style.minHeight = "350px";
+      iframe.style.height = "auto"; 
+      iframe.style.borderRadius = "12px";
+      iframe.style.overflow = "hidden"; // prevent double scrollbar
+      iframe.style.transition = "all 0.3s ease";
       iframe.loading = "lazy";
-      iframe.setAttribute("scrolling", "no");
-      iframe.style.minHeight = "420px";
 
       el.innerHTML = "";
       el.appendChild(iframe);
+
+      // Listen for resize messages from iframe
+      window.addEventListener("message", (event) => {
+        if (event.origin !== origin) return;
+        if (event.data.type === "resize" && event.data.height) {
+          iframe.style.height = event.data.height + "px";
+        }
+      });
     });
   }
 
@@ -48,3 +55,14 @@
     init();
   }
 })();
+
+// Send height to parent
+function postHeight() {
+  const height = document.documentElement.scrollHeight;
+  window.parent.postMessage({ type: "resize", height }, "*");
+}
+
+// Trigger on load + resize
+window.addEventListener("load", postHeight);
+window.addEventListener("resize", postHeight);
+setInterval(postHeight, 500); // fallback if content changes dynamically

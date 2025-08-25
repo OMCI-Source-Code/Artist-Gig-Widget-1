@@ -4,7 +4,6 @@ import { useLocation } from "react-router-dom";
 import { fetchArtistGigs } from "../api";
 import "../styles/widget.css";   
 
-
 export default function WidgetArtist() {
   const location = useLocation();
   const [gigs, setGigs] = useState([]);
@@ -33,39 +32,29 @@ export default function WidgetArtist() {
     load();
   }, [artistId]);
 
-  if (loading) return <div>Loading gigs…</div>;
-  if (!gigs.length) return <div>No gigs yet.</div>;
+  if (loading) return <div className="gig-widget">Loading gigs…</div>;
+  if (!gigs.length) return <div className="gig-widget">No gigs yet.</div>;
 
   return (
     <div className="gig-widget">
-      {view === "list" ? (
-        <ul>
-          {gigs.map((gig) => (
-            <li key={gig.id}>
-              <strong>{gig.title}</strong> — {new Date(gig.date_time).toLocaleString()} @ {gig.venue}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <div>
-          {gigs.map((gig) => (
-            <div key={gig.id} style={{ marginBottom: "1rem" }}>
-              <h3>{gig.title}</h3>
-              <p>
-                {new Date(gig.date_time).toLocaleString()} — {gig.venue}
-              </p>
-              <p>{gig.description}</p>
-              {gig.link && (
-                <p>
-                  <a href={gig.link} target="_blank" rel="noreferrer">
-                    Event Link
-                  </a>
-                </p>
-              )}
-            </div>
-          ))}
+      {gigs.map((gig) => (
+        <div key={gig.id} className="gig-card">
+          <h3 className="gig-title">{gig.title}</h3>
+          <div className="gig-meta">
+            <time>{new Date(gig.date_time).toLocaleString()}</time>
+            <span> — {gig.venue}</span>
+            <span>{gig.private ? " 🔒 Private" : " 🌐 Public"}</span>
+          </div>
+          {gig.description && <p className="gig-description">{gig.description}</p>}
+          {gig.link && (
+            <p>
+              <a href={gig.link} target="_blank" rel="noreferrer">
+                Event Link
+              </a>
+            </p>
+          )}
         </div>
-      )}
+      ))}
     </div>
   );
 }
