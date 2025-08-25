@@ -5,10 +5,14 @@ export default function GigForm({ initial = {}, onSave, onCancel }) {
   const emptyForm = {
     title: "",
     date_time: "",
+    end_time: "",        // NEW
     venue: "",
     description: "",
     link: "",
+    directions: "",      // NEW
     private: false,
+    eaPublicOnly: false, // NEW
+    pPublicOnly: false,  // NEW
   };
 
   const [form, setForm] = useState(emptyForm);
@@ -18,10 +22,14 @@ export default function GigForm({ initial = {}, onSave, onCancel }) {
       setForm({
         title: initial.title || "",
         date_time: initial.date_time ? initial.date_time.slice(0, 16) : "",
+        end_time: initial.end_time ? initial.end_time.slice(0, 16) : "",
         venue: initial.venue || "",
         description: initial.description || "",
         link: initial.link || "",
+        directions: initial.directions || "",
         private: initial.private || false,
+        eaPublicOnly: initial.eaPublicOnly || false,
+        pPublicOnly: initial.pPublicOnly || false,
       });
     } else {
       setForm(emptyForm);
@@ -38,7 +46,11 @@ export default function GigForm({ initial = {}, onSave, onCancel }) {
 
   async function submit(e) {
     e.preventDefault();
-    const body = { ...form, date_time: new Date(form.date_time).toISOString() };
+    const body = {
+      ...form,
+      date_time: new Date(form.date_time).toISOString(),
+      end_time: form.end_time ? new Date(form.end_time).toISOString() : null,
+    };
 
     try {
       await onSave(body);
@@ -61,12 +73,21 @@ export default function GigForm({ initial = {}, onSave, onCancel }) {
       </label>
 
       <label>
-        Date & Time
+        Start Date & Time
         <input
           type="datetime-local"
           value={form.date_time}
           onChange={(e) => update("date_time", e.target.value)}
           required
+        />
+      </label>
+
+      <label>
+        End Date & Time
+        <input
+          type="datetime-local"
+          value={form.end_time}
+          onChange={(e) => update("end_time", e.target.value)}
         />
       </label>
 
@@ -91,11 +112,20 @@ export default function GigForm({ initial = {}, onSave, onCancel }) {
       </label>
 
       <label>
-        Ticket/Info Link(Optional)
+        Ticket/Info Link (Optional)
         <input
           placeholder="https://example.com"
           value={form.link}
           onChange={(e) => update("link", e.target.value)}
+        />
+      </label>
+
+      <label>
+        Directions (Optional)
+        <input
+          placeholder="Parking info, gate numbers, special entry details..."
+          value={form.directions}
+          onChange={(e) => update("directions", e.target.value)}
         />
       </label>
 
@@ -106,6 +136,24 @@ export default function GigForm({ initial = {}, onSave, onCancel }) {
           onChange={(e) => update("private", e.target.checked)}
         />
         Private (show only on your widget)
+      </label>
+
+      <label className="checkbox">
+        <input
+          type="checkbox"
+          checked={form.eaPublicOnly}
+          onChange={(e) => update("eaPublicOnly", e.target.checked)}
+        />
+        3 EA CEP (show only on coop widget)
+      </label>
+
+      <label className="checkbox">
+        <input
+          type="checkbox"
+          checked={form.pPublicOnly}
+          onChange={(e) => update("pPublicOnly", e.target.checked)}
+        />
+        3P (show only on coop widget)
       </label>
 
       <div className="actions">

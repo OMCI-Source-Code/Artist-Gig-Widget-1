@@ -73,36 +73,65 @@ function Inner() {
         </div>
 
         <div className="card">
-          <h3>Your Gigs</h3>
-          {!gigs.length && <p>No gigs yet.</p>}
-          <ul className="gigs-list">
-            {gigs.map((g) => (
-              <li key={g.id} className="gig-item">
-                <div className="gig-header">
-                  <div>
-                    <div className="gig-title">{g.title}</div>
-                    <div className="gig-meta">
-                      <span>📅 {new Date(g.date_time).toLocaleString()}</span>
-                      <span>📍 {g.venue}</span>
-                      <span>{g.private ? "🔒 Private" : "🌐 Public"}</span>
-                    </div>
+<ul className="gigs-list">
+  {gigs.map((g) => (
+    <li key={g.id} className="gig-item">
+      <div className="gig-header">
+        <div>
+          <div className="gig-title">{g.title}</div>
+          <div className="gig-meta">
+            <span>
+              📅 {new Date(g.date_time).toLocaleString()}
+              {g.end_time
+                ? " - " + new Date(g.end_time).toLocaleTimeString()
+                : ""}
+            </span>
+            <span>📍 {g.venue}</span>
+            <span>{g.private ? "🔒 Private" : "🌐 Public"}</span>
+          </div>
 
-                  </div>
-                  <div style={{ display: "flex", gap: 8 }}>
-                    <button className="edit-btn" onClick={() => setEditing(g)}>
-                      Edit
-                    </button>
-                    <button
-                      className="delete-btn"
-                      onClick={() => handleDelete(g.id)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
+          {/* ✅ New fields */}
+          {g.description && (
+            <div className="gig-description">📝 {g.description}</div>
+          )}
+          {g.link && (
+            <div>
+              🔗{" "}
+              <a href={g.link} target="_blank" rel="noreferrer">
+                {g.link}
+              </a>
+            </div>
+          )}
+          {g.directions && (
+            <div className="gig-directions">🧭 {g.directions}</div>
+          )}
+
+          <div className="gig-flags">
+            {g.ea_public_only && (
+              <span className="flag ea">3 EA CEP</span>
+            )}
+            {g.p_public_only && (
+              <span className="flag p">3P</span>
+            )}
+          </div>
+        </div>
+
+        <div style={{ display: "flex", gap: 8 }}>
+          <button className="edit-btn" onClick={() => setEditing(g)}>
+            Edit
+          </button>
+          <button
+            className="delete-btn"
+            onClick={() => handleDelete(g.id)}
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </li>
+  ))}
+</ul>
+
         </div>
       </div>
 

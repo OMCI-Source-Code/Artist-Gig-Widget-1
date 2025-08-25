@@ -2,14 +2,18 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { fetchArtistGigs } from "../api";
-import "../styles/widget.css";   
+import "../styles/widget.css";
 
 export default function WidgetArtist() {
   const location = useLocation();
   const [gigs, setGigs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("all");
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState("soonest");
+  const [startDate, setStartDate] = useState(""); // date filter
 
-  // Pull query params from iframe URL
+  // query params (from iframe embed)
   const params = new URLSearchParams(location.search);
   const artistId = params.get("artistId");
   const view = params.get("view") || "list";
@@ -32,29 +36,131 @@ export default function WidgetArtist() {
     load();
   }, [artistId]);
 
-  if (loading) return <div className="gig-widget">Loading gigs…</div>;
-  if (!gigs.length) return <div className="gig-widget">No gigs yet.</div>;
+  // --- filtering ---
+  function applyFilter(gigs) {
+    const now = new Date();
+    let result = [...gigs];
+
+    // upcoming/past/all
+    if (filter === "upcoming") {
+      result = result.filter((g) => new Date(g.date_time) >= now);
+    } else if (filter === "past") {
+      result = result.filter((g) => new Date(g.date_time) < now);
+    }
+
+    // search
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      result = result.filter(
+        (g) =>
+          g.title.toLowerCase().includes(q) ||
+          g.venue.toLowerCase().includes(q) ||
+          (g.description || "").toLowerCase().includes(q) ||
+          (g.directions || "").toLowerCase().includes(q)
+      );
+    }
+
+    // start date filter
+    if (startDate) {
+      const chosen = new Date(startDate);
+      result = result.filter((g) => new Date(g.date_time) >= chosen);
+    }
+
+    // sort
+    if (sort === "soonest") {
+      result.sort((a, b) => new Date(a.date_time) - new Date(b.date_time));
+    } else if (sort === "latest") {
+      result.sort((a, b) => new Date(b.date_time) - new Date(a.date_time));
+    }
+
+    return result;
+  }
+
+  if (loading) return <div>Loading gigs…</div>;
+  if (!gigs.length) return <div>No gigs yet.</div>;
+
+  const filtered = applyFilter(gigs);
 
   return (
     <div className="gig-widget">
-      {gigs.map((gig) => (
-        <div key={gig.id} className="gig-card">
-          <h3 className="gig-title">{gig.title}</h3>
-          <div className="gig-meta">
-            <time>{new Date(gig.date_time).toLocaleString()}</time>
-            <span> — {gig.venue}</span>
-            <span>{gig.private ? " 🔒 Private" : " 🌐 Public"}</span>
-          </div>
-          {gig.description && <p className="gig-description">{gig.description}</p>}
-          {gig.link && (
-            <p>
-              <a href={gig.link} target="_blank" rel="noreferrer">
-                Event Link
-              </a>
-            </p>
-          )}
+      {/* Controls */}
+      <div className="gig-controls">
+        <div className="gig-filters">
+          <button
+            className={filter === "all" ? "active" : ""}
+            onClick={() => setFilter("all")}
+          >
+            All
+          </button>
+          <button
+            className={filter === "upcoming" ? "active" : ""}
+            onClick={() => setFilter("upcoming")}
+          >
+            Upcoming
+          </button>
+          <button
+            className={filter === "past" ? "active" : ""}
+            onClick={() => setFilter("past")}
+          >
+            Past
+          </button>
         </div>
-      ))}
+
+        <input
+          type="text"
+          className="gig-search"
+          placeholder="Search gigs…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+
+        <select
+          className="gig-sort"
+          value={sort}
+          onChange={(e) => setSort(e.target.value)}
+        >
+          <option value="soonest">Soonest First</option>
+          <option value="latest">Latest First</option>
+        </select>
+
+        {/* Date filter */}
+        <input
+          type="date"
+          className="gig-date"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+        />
+      </div>
+
+      {/* Cards like public widget */}
+      <div className="card-container">
+        {filtered.map((gig) => (
+          <div key={gig.id} className="gig-card">
+            <div className="card-content">
+              <h3 className="gig-title">{gig.title}</h3>
+              <p className="gig-datetime">
+                {new Date(gig.date_time).toLocaleString()} — {gig.venue}
+              </p>
+              {gig.description && (
+                <p className="gig-description">{gig.description}</p>
+              )}
+              {gig.directions && (
+                <p className="gig-directions">🚗 {gig.directions}</p>
+              )}
+              {gig.third_party && (
+                <p className="gig-3p">✨ Third Party Program</p>
+              )}
+            </div>
+            {gig.link && (
+              <div className="card-footer">
+                <a href={gig.link} target="_blank" rel="noreferrer">
+                  Event Link
+                </a>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

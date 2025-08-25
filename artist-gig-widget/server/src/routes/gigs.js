@@ -22,17 +22,41 @@ router.get("/mine", authMiddleware, async (req, res) => {
 // ✅ Create a new gig
 router.post("/", authMiddleware, async (req, res) => {
   try {
-    const { title, date_time, venue, private: isPrivate } = req.body;
+    const {
+      title,
+      date_time,
+      end_time,
+      venue,
+      description,
+      link,
+      directions,
+      private: isPrivate,
+      eaPublicOnly,
+      pPublicOnly,
+    } = req.body;
 
     if (!title || !date_time || !venue) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
     const { rows } = await query(
-      `INSERT INTO gigs (artist_id, title, date_time, venue, private)
-       VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO gigs 
+        (artist_id, title, date_time, end_time, venue, description, link, directions, private, ea_public_only, p_public_only)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
        RETURNING *`,
-      [req.user.id, title, date_time, venue, isPrivate || false]
+      [
+        req.user.id,
+        title,
+        date_time,
+        end_time || null,
+        venue,
+        description || null,
+        link || null,
+        directions || null,
+        isPrivate || false,
+        eaPublicOnly || false,
+        pPublicOnly || false,
+      ]
     );
 
     res.json(rows[0]);
@@ -46,14 +70,47 @@ router.post("/", authMiddleware, async (req, res) => {
 router.put("/:id", authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, date_time, venue, private: isPrivate } = req.body;
+    const {
+      title,
+      date_time,
+      end_time,
+      venue,
+      description,
+      link,
+      directions,
+      private: isPrivate,
+      eaPublicOnly,
+      pPublicOnly,
+    } = req.body;
 
     const { rows } = await query(
       `UPDATE gigs
-       SET title=$1, date_time=$2, venue=$3, private=$4
-       WHERE id=$5 AND artist_id=$6
+       SET title=$1,
+           date_time=$2,
+           end_time=$3,
+           venue=$4,
+           description=$5,
+           link=$6,
+           directions=$7,
+           private=$8,
+           ea_public_only=$9,
+           p_public_only=$10
+       WHERE id=$11 AND artist_id=$12
        RETURNING *`,
-      [title, date_time, venue, isPrivate || false, id, req.user.id]
+      [
+        title,
+        date_time,
+        end_time || null,
+        venue,
+        description || null,
+        link || null,
+        directions || null,
+        isPrivate || false,
+        eaPublicOnly || false,
+        pPublicOnly || false,
+        id,
+        req.user.id,
+      ]
     );
 
     if (!rows.length) {
@@ -88,7 +145,7 @@ router.delete("/:id", authMiddleware, async (req, res) => {
   }
 });
 
-// ✅ Public: all gigs (for global widget)
+// ✅ Public gigs for widget
 router.get("/public", async (req, res) => {
   try {
     const { rows } = await query(

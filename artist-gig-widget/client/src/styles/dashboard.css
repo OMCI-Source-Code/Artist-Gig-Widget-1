@@ -64,6 +64,34 @@
   box-shadow: 0 10px 20px rgba(217, 174, 76, 0.35);
 }
 
+.gig-description {
+  margin-top: 4px;
+  font-style: italic;
+  color: #444;
+}
+
+.gig-directions {
+  margin-top: 4px;
+  color: #555;
+}
+
+.gig-flags {
+  margin-top: 6px;
+}
+
+.flag {
+  display: inline-block;
+  background: #eee;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  border-radius: 5px;
+  margin-right: 6px;
+}
+
+.flag.ea { background: #cce5ff; color: #004085; }
+.flag.p { background: #d4edda; color: #155724; }
+
+
 /* Gigs list */
 .gigs-list {
   list-style: none;
