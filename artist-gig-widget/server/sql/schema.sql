@@ -24,3 +24,15 @@ updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 
 CREATE INDEX IF NOT EXISTS idx_gigs_artist ON gigs(artist_id);
 CREATE INDEX IF NOT EXISTS idx_gigs_public_date ON gigs(private, date_time);
+
+
+
+ -- run this after the sql above 
+ ALTER TABLE gigs
+  ADD COLUMN end_time TIMESTAMP NULL,
+  ADD COLUMN description TEXT,
+  ADD COLUMN link TEXT,
+  ADD COLUMN directions TEXT,
+  ADD COLUMN ea_public_only BOOLEAN DEFAULT FALSE,
+  ADD COLUMN p_public_only BOOLEAN DEFAULT FALSE;
+ -->
