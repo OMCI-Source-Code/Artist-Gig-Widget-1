@@ -22,14 +22,12 @@ function Inner() {
     async function load() {
         try {
             const rows = await fetchMyGigs();
-            // ensure each gig has post_show, even if null
             const gigsWithPostShow = rows.map(g => ({ ...g, post_show: g.post_show || {} }));
             setGigs(gigsWithPostShow);
         } catch (err) {
             console.error(err);
         }
     }
-
 
     useEffect(() => {
         load();
@@ -41,7 +39,6 @@ function Inner() {
             setGigs([...gigs, newGig]);
         } catch (err) {
             console.error("Save failed:", err);
-            alert(JSON.stringify(gig));
         }
     };
 
@@ -53,13 +50,25 @@ function Inner() {
             await load();
         } catch (err) {
             console.error("Error updating gig:", err);
-            alert(JSON.stringify(body));
         }
     };
 
     const handleDelete = async (id) => {
         if (!confirm("Delete gig?")) return;
         await deleteGig(id);
+        await load();
+    };
+
+    const savePostShow = async (gigId, body) => {
+        const token = localStorage.getItem("token");
+        await fetch(`/api/gigs/${gigId}/postshow`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ post_show: body }),
+        });
         await load();
     };
 
@@ -84,7 +93,6 @@ function Inner() {
 
                 <div className="card">
                     <h3>Your Gigs</h3>
-
                     {!gigs.length && <p>No gigs yet.</p>}
                     <ul className="gigs-list">
                         {gigs.map((g) => (
@@ -103,10 +111,7 @@ function Inner() {
                                         <button className="edit-btn" onClick={() => setEditing(g)}>
                                             Edit
                                         </button>
-                                        <button
-                                            className="delete-btn"
-                                            onClick={() => handleDelete(g.id)}
-                                        >
+                                        <button className="delete-btn" onClick={() => handleDelete(g.id)}>
                                             Delete
                                         </button>
                                         <button
@@ -118,7 +123,7 @@ function Inner() {
                                         >
                                             {activePostShowGig?.id === g.id
                                                 ? "Hide Post-show Form"
-                                                : g.post_show
+                                                : g.post_show && Object.keys(g.post_show).length
                                                     ? "Edit Post-show"
                                                     : "Add Post-show"}
                                         </button>
@@ -129,10 +134,8 @@ function Inner() {
                                     <PostShowForm
                                         initial={g.post_show || {}}
                                         onSave={async (body) => {
-                                            const fullUpdate = { ...g, post_show: body };
-                                            await updateGig(g.id, fullUpdate);
+                                            await savePostShow(g.id, body);
                                             setActivePostShowGig(null);
-                                            await load();
                                         }}
                                         onCancel={() => setActivePostShowGig(null)}
                                     />
