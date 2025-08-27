@@ -26,6 +26,7 @@ export default function WidgetGlobal() {
   return (
     <div className="gig-widget">
       <div className="card-container">
+
         {gigs.map((gig) => (
           <div key={gig.id} className="gig-card">
             <div className="card-content">
@@ -34,10 +35,6 @@ export default function WidgetGlobal() {
               {/* Date + End Time */}
               <p className="gig-datetime">
                 {new Date(gig.date_time).toLocaleString()}
-                {gig.end_time
-                  ? " - " + new Date(gig.end_time).toLocaleTimeString()
-                  : ""}{" "}
-                — {gig.venue}
               </p>
 
               {/* Artist */}

@@ -1,54 +1,57 @@
 // client/src/api.js
 
 function getQueryParam(name) {
-  if (typeof window === "undefined") return null;
-  return new URL(window.location.href).searchParams.get(name);
+    if (typeof window === "undefined") return null;
+    return new URL(window.location.href).searchParams.get(name);
 }
 
 // Build base API URL
 let base =
-  getQueryParam("api") ||
-  window.GIG_WIDGET_API ||
-  import.meta.env.VITE_API_URL ||
-  "http://localhost:4000/api";
+    getQueryParam("api") ||
+    window.GIG_WIDGET_API ||
+    import.meta.env.VITE_API_URL ||
+    "http://localhost:4000/api";
 
 // Ensure it ends with /api
 if (!base.endsWith("/api")) {
-  base = base.replace(/\/$/, "") + "/api";
+    base = base.replace(/\/$/, "") + "/api";
 }
 
 console.log("API_URL:", base);
 
 // ---- Central API wrapper ----
 export async function apiFetch(path, options = {}) {
-  const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
-  const res = await fetch(`${base}${path}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...options.headers,
-    },
-  });
+    const res = await fetch(`${base}${path}`, {
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            ...options.headers,
+        },
+    });
 
-  if (!res.ok) {
-    if (res.status === 401) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("artist");
-      window.location.href = "/login";
+    if (!res.ok) {
+        if (res.status === 401) {
+            localStorage.removeItem("token");
+            localStorage.removeItem("artist");
+            window.location.href = "/login";
+        }
+
+        let message;
+        try {
+            const clone = res.clone(); // clone so we can safely read twice
+            const json = await clone.json();
+            message = json.error || JSON.stringify(json);
+        } catch {
+            message = await res.text();
+        }
+
+        throw new Error(message || "API request failed");
     }
 
-    let message;
-    try {
-      message = (await res.json()).error;
-    } catch {
-      message = await res.text();
-    }
-    throw new Error(message || "API request failed");
-  }
-
-  return res.json();
+    return res.json();
 }
 
 // ---- Convenience wrappers ----
@@ -61,11 +64,14 @@ export const deleteGig       = (id) => apiFetch(`/gigs/${id}`, { method: "DELETE
 export const fetchArtist     = (id) => apiFetch(`/artists/${id}`);
 export const fetchPublicGigs = () => apiFetch("/gigs/public");
 
-export const register        = (artist) => apiFetch("/auth/register", { method: "POST", body: JSON.stringify(artist) });
-export const login           = (creds)  => apiFetch("/auth/login", { method: "POST", body: JSON.stringify(creds) });
-export const logout          = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("artist");
-  window.location.href = "/login";
-  console.log("Fetching:", `${base}${path}`);
+export const register = (artist) =>
+    apiFetch("/auth/register", { method: "POST", body: JSON.stringify(artist) });
+
+export const login = (creds) =>
+    apiFetch("/auth/login", { method: "POST", body: JSON.stringify(creds) });
+
+export const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("artist");
+    window.location.href = "/login";
 };

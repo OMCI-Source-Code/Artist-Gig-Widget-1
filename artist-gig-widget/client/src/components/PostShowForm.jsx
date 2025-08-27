@@ -11,16 +11,12 @@ export default function PostShowForm({ initial = {}, onSave, onCancel }) {
     const [form, setForm] = useState(emptyForm);
 
     useEffect(() => {
-        if (initial && Object.keys(initial).length > 0) {
-            setForm({
-                ticket_sales: initial.ticket_sales || "",
-                audience_amt: initial.audience_amt || "",
-                audience_reaction: initial.audience_reaction || "",
-                description: initial.description || "",
-            });
-        } else {
-            setForm(emptyForm);
-        }
+        setForm({
+            ticket_sales: initial.ticket_sales || "",
+            audience_amt: initial.audience_amt || "",
+            audience_reaction: initial.audience_reaction || "",
+            description: initial.description || "",
+        });
     }, [initial]);
 
     function update(k, v) {
@@ -33,10 +29,8 @@ export default function PostShowForm({ initial = {}, onSave, onCancel }) {
 
     async function submit(e) {
         e.preventDefault();
-        const body = { ...form, date_time: new Date(form.date_time).toISOString() };
-
         try {
-            await onSave(body);
+            await onSave({ ...form });
             resetForm();
         } catch (err) {
             console.error("Save failed:", err);
@@ -67,8 +61,8 @@ export default function PostShowForm({ initial = {}, onSave, onCancel }) {
                 Audience Reaction
                 <input
                     placeholder="Exuberant cheering!"
-                    value={form.venue}
-                    onChange={(e) => update("venue", e.target.value)}
+                    value={form.audience_reaction}
+                    onChange={(e) => update("audience_reaction", e.target.value)}
                 />
             </label>
 
@@ -82,16 +76,15 @@ export default function PostShowForm({ initial = {}, onSave, onCancel }) {
                 />
             </label>
 
-
             <div className="actions">
-                <button type="submit" className="postShowSave" style={{margin: "15px 10px 0 0"}}>
+                <button type="submit" className="postShowSave" style={{ margin: "15px 10px 0 0" }}>
                     {initial?.id ? "Update" : "Save"}
                 </button>
                 {initial?.id && (
                     <button
                         type="button"
                         className="postShowCancel"
-                        style={{margin: "15px 10px 0 0"}}
+                        style={{ margin: "15px 10px 0 0" }}
                         onClick={() => {
                             resetForm();
                             onCancel?.();

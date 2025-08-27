@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { apiFetch } from "../api.js";
+import { fetchMyGigs, createGig, updateGig, deleteGig } from "../api.js";
 import Protected from "./ProtectedRoute.jsx";
 import GigForm from "./GigForm.jsx";
 import PostShowForm from "./PostShowForm.jsx";
@@ -21,37 +21,45 @@ function Inner() {
 
     async function load() {
         try {
-            const rows = await apiFetch("/gigs/mine");
-            setGigs(rows);
+            const rows = await fetchMyGigs();
+            // ensure each gig has post_show, even if null
+            const gigsWithPostShow = rows.map(g => ({ ...g, post_show: g.post_show || {} }));
+            setGigs(gigsWithPostShow);
         } catch (err) {
             console.error(err);
         }
     }
+
 
     useEffect(() => {
         load();
     }, []);
 
     const handleCreate = async (gig) => {
-        const newGig = await apiFetch("/gigs", {
-            method: "POST",
-            body: JSON.stringify(gig),
-        });
-        setGigs([...gigs, newGig]);
+        try {
+            const newGig = await createGig(gig);
+            setGigs([...gigs, newGig]);
+        } catch (err) {
+            console.error("Save failed:", err);
+            alert(JSON.stringify(gig));
+        }
     };
 
     const handleUpdate = async (id, body) => {
-        await apiFetch(`/gigs/${id}`, {
-            method: "PUT",
-            body: JSON.stringify(body),
-        });
-        setEditing(null);
-        await load();
+        try {
+            const fullBody = { ...editing, ...body };
+            await updateGig(id, fullBody);
+            setEditing(null);
+            await load();
+        } catch (err) {
+            console.error("Error updating gig:", err);
+            alert(JSON.stringify(body));
+        }
     };
 
     const handleDelete = async (id) => {
         if (!confirm("Delete gig?")) return;
-        await apiFetch(`/gigs/${id}`, { method: "DELETE" });
+        await deleteGig(id);
         await load();
     };
 
@@ -110,22 +118,19 @@ function Inner() {
                                         >
                                             {activePostShowGig?.id === g.id
                                                 ? "Hide Post-show Form"
-                                                : "Add Post-show Details"}
+                                                : g.post_show
+                                                    ? "Edit Post-show"
+                                                    : "Add Post-show"}
                                         </button>
                                     </div>
                                 </div>
 
                                 {activePostShowGig?.id === g.id && (
                                     <PostShowForm
-                                        initial={activePostShowGig}
+                                        initial={g.post_show || {}}
                                         onSave={async (body) => {
-                                            await apiFetch(
-                                                `/gigs/${activePostShowGig.id}/postshow`,
-                                                {
-                                                    method: "POST",
-                                                    body: JSON.stringify(body),
-                                                }
-                                            );
+                                            const fullUpdate = { ...g, post_show: body };
+                                            await updateGig(g.id, fullUpdate);
                                             setActivePostShowGig(null);
                                             await load();
                                         }}

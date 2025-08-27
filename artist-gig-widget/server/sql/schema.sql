@@ -1,26 +1,25 @@
 CREATE TABLE IF NOT EXISTS artists (
-id SERIAL PRIMARY KEY,
-name VARCHAR(255) NOT NULL,
-website TEXT,
-email VARCHAR(255) UNIQUE NOT NULL,
-password_hash TEXT NOT NULL,
-created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
+                                       id SERIAL PRIMARY KEY,
+                                       name VARCHAR(255) NOT NULL,
+    website TEXT,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
 
 CREATE TABLE IF NOT EXISTS gigs (
-id SERIAL PRIMARY KEY,
-artist_id INTEGER NOT NULL REFERENCES artists(id) ON DELETE CASCADE,
-title VARCHAR(255) NOT NULL,
-date_time TIMESTAMPTZ NOT NULL,
-venue VARCHAR(255) NOT NULL,
-description TEXT,
-link TEXT,
-private BOOLEAN NOT NULL DEFAULT false,
-created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
+                                    id SERIAL PRIMARY KEY,
+                                    artist_id INTEGER NOT NULL REFERENCES artists(id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    date_time TIMESTAMPTZ NOT NULL,
+    venue VARCHAR(255) NOT NULL,
+    description TEXT,
+    link TEXT,
+    private BOOLEAN NOT NULL DEFAULT false,
+    post_show JSONB, -- new column for PostShowForm data
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
 
 CREATE INDEX IF NOT EXISTS idx_gigs_artist ON gigs(artist_id);
 CREATE INDEX IF NOT EXISTS idx_gigs_public_date ON gigs(private, date_time);
