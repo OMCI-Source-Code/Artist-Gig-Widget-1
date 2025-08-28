@@ -78,7 +78,7 @@
 }
 
 .gigs-list.scrollable {
-  max-height: 600px;   /* ✅ keeps list scrollable */
+  max-height: 1150px;   /* ✅ keeps list scrollable */
   overflow-y: auto;
   padding-right: 10px;
   scrollbar-width: thin;
@@ -147,6 +147,7 @@
 .gig-flags {
   margin-top: 8px;
 }
+
 
 .flag {
   display: inline-block;

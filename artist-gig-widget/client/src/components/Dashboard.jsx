@@ -63,56 +63,58 @@ function Inner() {
     await load();
   };
 
-  // ✅ CSV Export
-  const exportCSV = () => {
-    if (!gigs.length) {
-      alert("No gigs to export.");
-      return;
-    }
+  // ✅ CSV Export with filters
+const exportCSV = () => {
+  if (!filteredGigs.length) {
+    alert("No gigs to export.");
+    return;
+  }
 
-    const headers = [
-      "Title",
-      "Date",
-      "End Time",
-      "Venue",
-      "Description",
-      "Directions",
-      "Link",
-      "Private",
-      "3 EA CEP",
-      "3P",
-    ];
+  const headers = [
+    "Title",
+    "Start Date & Time",
+    "End Time",
+    "Venue",
+    "Description",
+    "Directions",
+    "Link",
+    "Private?",
+    "3 EA CEP?",
+    "3P?",
+  ];
 
-    const rows = gigs.map((g) => [
-      g.title,
-      new Date(g.date_time).toLocaleString(),
-      g.end_time ? new Date(g.end_time).toLocaleTimeString() : "",
-      g.venue || "",
-      g.description || "",
-      g.directions || "",
-      g.link || "",
-      g.private ? "Yes" : "No",
-      g.ea_public_only ? "Yes" : "No",
-      g.p_public_only ? "Yes" : "No",
-    ]);
+  const rows = filteredGigs.map((g) => [
+    g.title,
+    new Date(g.date_time).toISOString(),
+    g.end_time ? new Date(g.end_time).toISOString() : "",
+    g.venue || "",
+    g.description || "",
+    g.directions || "",
+    g.link || "",
+    g.private ? "Yes" : "No",
+    g.ea_public_only ? "Yes" : "No",
+    g.p_public_only ? "Yes" : "No",
+  ]);
 
-    const csvContent =
-      [headers, ...rows]
-        .map((row) =>
-          row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(",")
-        )
-        .join("\n");
+  const csvContent =
+    [headers, ...rows]
+      .map((row) =>
+        row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(",")
+      )
+      .join("\n");
 
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
 
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", "my-gigs.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+  const filename = `${artist?.name || "artist"}-gigs-${filter}.csv`;
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
 
 
   return (
