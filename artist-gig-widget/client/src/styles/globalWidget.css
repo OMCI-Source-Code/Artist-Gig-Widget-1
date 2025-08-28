@@ -5,9 +5,57 @@
   color: #111;
   border: 1px solid #ddd;
   border-radius: 12px;
-  overflow-y: auto;
-  max-height: 500px; /* Scrollable */
   padding: 1rem;
+  max-height: 600px;     /* Scrollable like screenshot */
+  overflow-y: auto;
+}
+
+/* === Controls (Filter/Search/Sort/Date) === */
+.gig-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  align-items: center;
+}
+
+.gig-filters {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.gig-filters button {
+  background: #f3f4f6;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.gig-filters button:hover {
+  background: #e5e7eb;
+}
+
+.gig-filters button.active {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+
+.gig-search,
+.gig-sort,
+.gig-date {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.9rem;
+}
+
+.gig-search {
+  flex: 1;
+  min-width: 150px;
 }
 
 /* Section heading */

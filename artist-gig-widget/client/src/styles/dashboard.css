@@ -102,6 +102,7 @@
 }
 
 .gig-item {
+  height: 100% ;
   border: 1px solid #d9ae4c;
   border-radius: 12px;
   padding: 1rem;

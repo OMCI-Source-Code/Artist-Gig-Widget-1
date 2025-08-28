@@ -2,6 +2,8 @@
 .gig-widget {
   font-family: system-ui, -apple-system, sans-serif;
   padding: 1rem;
+  max-height: 600px;    /* Scrollable like screenshot */  
+  overflow-y: auto;  
 }
 
 .gig-list {

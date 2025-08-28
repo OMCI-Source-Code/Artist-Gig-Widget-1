@@ -8,10 +8,12 @@ export default function WidgetArtist() {
   const location = useLocation();
   const [gigs, setGigs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("all");
+
+  // Filters
+  const [filter, setFilter] = useState("upcoming"); // default upcoming
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("soonest");
-  const [startDate, setStartDate] = useState(""); // date filter
+  const [startDate, setStartDate] = useState("");
 
   // query params (from iframe embed)
   const params = new URLSearchParams(location.search);
@@ -35,6 +37,29 @@ export default function WidgetArtist() {
     }
     load();
   }, [artistId]);
+
+// Define max height 
+const MAX_HEIGHT = 600;
+
+useEffect(() => {
+  function sendHeight() {
+    const widget = document.querySelector(".gig-widget");
+    if (widget) {
+      // Take the visible height or scrollHeight, whichever is smaller
+      const height = Math.min(widget.scrollHeight, MAX_HEIGHT);
+      window.parent.postMessage({ type: "resizeWidget", height }, "*");
+    }
+  }
+
+  // Send height initially and whenever dependencies change
+  sendHeight();
+
+  // Also update on window resize
+  window.addEventListener("resize", sendHeight);
+  return () => window.removeEventListener("resize", sendHeight);
+}, [gigs, filter, search, sort, startDate]);
+
+
 
   // --- filtering ---
   function applyFilter(gigs) {
@@ -139,18 +164,29 @@ export default function WidgetArtist() {
             <div className="card-content">
               <h3 className="gig-title">{gig.title}</h3>
               <p className="gig-datetime">
-                {new Date(gig.date_time).toLocaleString()} — {gig.venue}
+                {new Date(gig.date_time).toLocaleString()}
+                {gig.end_time
+                  ? " - " + new Date(gig.end_time).toLocaleTimeString()
+                  : ""}{" "}
+                — {gig.venue}
               </p>
+
               {gig.description && (
                 <p className="gig-description">{gig.description}</p>
               )}
               {gig.directions && (
-                <p className="gig-directions">🚗 {gig.directions}</p>
+                <p className="gig-directions">🧭 {gig.directions}</p>
               )}
-              {gig.third_party && (
-                <p className="gig-3p">✨ Third Party Program</p>
-              )}
+
+              {/* Flags */}
+              <div className="gig-flags">
+                {gig.ea_public_only && (
+                  <span className="flag ea">3 EA CEP</span>
+                )}
+                {gig.p_public_only && <span className="flag p">3P</span>}
+              </div>
             </div>
+
             {gig.link && (
               <div className="card-footer">
                 <a href={gig.link} target="_blank" rel="noreferrer">
