@@ -16,10 +16,11 @@ function Inner() {
   const artist = JSON.parse(localStorage.getItem("artist") || "null");
   const [gigs, setGigs] = useState([]);
   const [editing, setEditing] = useState(null);
+  const [filter, setFilter] = useState("upcoming"); // ✅ filter state
 
   async function load() {
     try {
-      const rows = await apiFetch("/gigs/mine"); // ✅ no extra /api
+      const rows = await apiFetch("/gigs/mine");
       setGigs(rows);
     } catch (err) {
       console.error(err);
@@ -29,6 +30,15 @@ function Inner() {
   useEffect(() => {
     load();
   }, []);
+
+  // ✅ filter gigs like in public widget
+  const now = new Date();
+  const filteredGigs = gigs.filter((g) => {
+    const start = new Date(g.date_time);
+    if (filter === "upcoming") return start >= now;
+    if (filter === "past") return start < now;
+    return true; // all
+  });
 
   const handleCreate = async (gig) => {
     const newGig = await apiFetch("/gigs", {
@@ -53,7 +63,59 @@ function Inner() {
     await load();
   };
 
- return (
+  // ✅ CSV Export
+  const exportCSV = () => {
+    if (!gigs.length) {
+      alert("No gigs to export.");
+      return;
+    }
+
+    const headers = [
+      "Title",
+      "Date",
+      "End Time",
+      "Venue",
+      "Description",
+      "Directions",
+      "Link",
+      "Private",
+      "3 EA CEP",
+      "3P",
+    ];
+
+    const rows = gigs.map((g) => [
+      g.title,
+      new Date(g.date_time).toLocaleString(),
+      g.end_time ? new Date(g.end_time).toLocaleTimeString() : "",
+      g.venue || "",
+      g.description || "",
+      g.directions || "",
+      g.link || "",
+      g.private ? "Yes" : "No",
+      g.ea_public_only ? "Yes" : "No",
+      g.p_public_only ? "Yes" : "No",
+    ]);
+
+    const csvContent =
+      [headers, ...rows]
+        .map((row) =>
+          row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(",")
+        )
+        .join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "my-gigs.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+
+  return (
     <div className="dashboard">
       <h2>Dashboard</h2>
       <p className="artist-info">
@@ -73,74 +135,96 @@ function Inner() {
         </div>
 
         <div className="card">
-<ul className="gigs-list">
-  {gigs.map((g) => (
-    <li key={g.id} className="gig-item">
-      <div className="gig-header">
-        <div>
-          <div className="gig-title">{g.title}</div>
-          <div className="gig-meta">
-            <span>
-              📅 {new Date(g.date_time).toLocaleString()}
-              {g.end_time
-                ? " - " + new Date(g.end_time).toLocaleTimeString()
-                : ""}
-            </span>
-            <span>📍 {g.venue}</span>
-            <span>{g.private ? "🔒 Private" : "🌐 Public"}</span>
+          <div className="filter-bar">
+            <button
+              className={filter === "upcoming" ? "active" : ""}
+              onClick={() => setFilter("upcoming")}
+            >
+              Upcoming
+            </button>
+            <button
+              className={filter === "past" ? "active" : ""}
+              onClick={() => setFilter("past")}
+            >
+              Past
+            </button>
+            <button
+              className={filter === "all" ? "active" : ""}
+              onClick={() => setFilter("all")}
+            >
+              All
+            </button>
           </div>
 
-          {/* ✅ New fields */}
-          {g.description && (
-            <div className="gig-description">📝 {g.description}</div>
-          )}
-          {g.link && (
-            <div>
-              🔗{" "}
-              <a href={g.link} target="_blank" rel="noreferrer">
-                {g.link}
-              </a>
-            </div>
-          )}
-          {g.directions && (
-            <div className="gig-directions">🧭 {g.directions}</div>
-          )}
+          {/* ✅ scrollable gigs list */}
+          <ul className="gigs-list scrollable">
+            {filteredGigs.map((g) => (
+              <li key={g.id} className="gig-item">
+                <div className="gig-header">
+                  <div>
+                    <div className="gig-title">{g.title}</div>
+                    <div className="gig-meta">
+                      <span>
+                        📅 {new Date(g.date_time).toLocaleString()}
+                        {g.end_time
+                          ? " - " + new Date(g.end_time).toLocaleTimeString()
+                          : ""}
+                      </span>
+                      <span>📍 {g.venue}</span>
+                      <span>{g.private ? "🔒 Private" : "🌐 Public"}</span>
+                    </div>
 
-          <div className="gig-flags">
-            {g.ea_public_only && (
-              <span className="flag ea">3 EA CEP</span>
-            )}
-            {g.p_public_only && (
-              <span className="flag p">3P</span>
-            )}
-          </div>
-        </div>
+                    {g.description && (
+                      <div className="gig-description">📝 {g.description}</div>
+                    )}
+                    {g.link && (
+                      <div>
+                        🔗{" "}
+                        <a href={g.link} target="_blank" rel="noreferrer">
+                          {g.link}
+                        </a>
+                      </div>
+                    )}
+                    {g.directions && (
+                      <div className="gig-directions">🧭 {g.directions}</div>
+                    )}
 
-        <div style={{ display: "flex", gap: 8 }}>
-          <button className="edit-btn" onClick={() => setEditing(g)}>
-            Edit
-          </button>
-          <button
-            className="delete-btn"
-            onClick={() => handleDelete(g.id)}
-          >
-            Delete
-          </button>
+                    <div className="gig-flags">
+                      {g.ea_public_only && (
+                        <span className="flag ea">3 EA CEP</span>
+                      )}
+                      {g.p_public_only && (
+                        <span className="flag p">3P</span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <button className="edit-btn" onClick={() => setEditing(g)}>
+                      Edit
+                    </button>
+                    <button
+                      className="delete-btn"
+                      onClick={() => handleDelete(g.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
-    </li>
-  ))}
-</ul>
 
-        </div>
-      </div>
+      <hr style={{ margin: "24px 0" }} />
+      <h3>Tools</h3>
+      <button onClick={exportCSV}>⬇️ Export My Gigs (CSV)</button>
 
       <hr style={{ margin: "24px 0" }} />
       <h3>Embed Snippets</h3>
       <pre>{`<div data-gig-widget data-type="artist" data-artist-id="${artist?.id}" data-view="list"></div>
 <script src="${window.location.origin}/embed.js"></script>`}</pre>
-
-      
     </div>
   );
 }

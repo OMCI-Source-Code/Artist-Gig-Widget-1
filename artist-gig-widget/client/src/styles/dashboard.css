@@ -1,150 +1,174 @@
-/* Dashboard container */
+/* ===== Dashboard Layout ===== */
 .dashboard {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 2rem auto;
-  padding: 1rem;
+  padding: 1.5rem;
   font-family: "Inter", system-ui, sans-serif;
-  color: #fff; /* white text */
-  background: #000; /* black background */
+  color: #fff;
+  background: #000;
 }
 
-/* Headings */
+/* ===== Headings ===== */
 .dashboard h2 {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-  background: linear-gradient(90deg, #d9ae4c, #fff); /* gold to white gradient */
+  font-size: 2.25rem;
+  margin-bottom: 0.75rem;
+  background: linear-gradient(90deg, #d9ae4c, #fff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  font-weight: 700;
 }
 
 .dashboard h3 {
-  font-size: 1.25rem;
+  font-size: 1.3rem;
   margin-bottom: 1rem;
-  color: #d9ae4c; /* gold */
+  color: #d9ae4c;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  font-weight: 600;
 }
 
 .dashboard h3::before {
   content: "🎵";
-  font-size: 1.1rem;
+  font-size: 1.2rem;
 }
 
-/* Artist info card */
+/* ===== Artist Info ===== */
 .artist-info {
-  background: #111; /* dark */
+  background: #111;
   border: 1px solid #d9ae4c;
-  padding: 0.75rem 1rem;
-  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
   margin-bottom: 1.5rem;
   font-weight: 500;
-  color: #fff;
+  font-size: 1rem;
+  line-height: 1.5;
 }
 
-/* Layout grid */
+/* ===== Grid Layout ===== */
 .dashboard-grid {
   display: grid;
   grid-template-columns: 1fr 2fr;
-  gap: 1.5rem;
+  gap: 1.75rem;
+  margin-bottom: 2rem;
 }
 
-/* Card wrapper */
+/* ===== Card ===== */
 .card {
   background: #111;
-  border-radius: 14px;
-  box-shadow: 0 6px 16px rgba(217, 174, 76, 0.25); /* soft gold glow */
-  padding: 1.25rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(217, 174, 76, 0.25);
+  padding: 1.5rem;
+  border: 1px solid #2a2a2a;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  border: 1px solid #333;
 }
 
 .card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(217, 174, 76, 0.35);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(217, 174, 76, 0.35);
 }
 
-.gig-description {
-  margin-top: 4px;
-  font-style: italic;
-  color: #444;
-}
-
-.gig-directions {
-  margin-top: 4px;
-  color: #555;
-}
-
-.gig-flags {
-  margin-top: 6px;
-}
-
-.flag {
-  display: inline-block;
-  background: #eee;
-  padding: 2px 6px;
-  font-size: 0.75rem;
-  border-radius: 5px;
-  margin-right: 6px;
-}
-
-.flag.ea { background: #cce5ff; color: #004085; }
-.flag.p { background: #d4edda; color: #155724; }
-
-
-/* Gigs list */
+/* ===== Gigs ===== */
 .gigs-list {
   list-style: none;
   padding: 0;
   margin: 0;
   display: grid;
-  gap: 1rem;
+  gap: 1.25rem;
+}
+
+.gigs-list.scrollable {
+  max-height: 600px;   /* ✅ keeps list scrollable */
+  overflow-y: auto;
+  padding-right: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: #d9ae4c #111;
+}
+
+.gigs-list.scrollable::-webkit-scrollbar {
+  width: 8px;
+}
+.gigs-list.scrollable::-webkit-scrollbar-thumb {
+  background: #d9ae4c;
+  border-radius: 4px;
+}
+.gigs-list.scrollable::-webkit-scrollbar-track {
+  background: #111;
 }
 
 .gig-item {
-  height: 100% ;
-  border: 1px solid #d9ae4c;
+  border: 1px solid #2a2a2a;
   border-radius: 12px;
-  padding: 1rem;
+  padding: 1rem 1.25rem;
   background: #1a1a1a;
-  transition: all 0.15s ease;
-  position: relative;
-  overflow: hidden;
-  color: #fff;
+  transition: background 0.2s ease, border 0.2s ease;
 }
 
 .gig-item:hover {
   background: #222;
+  border-color: #d9ae4c;
 }
 
+/* Header inside each gig */
 .gig-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  gap: 12px;
 }
 
 .gig-title {
   font-weight: 600;
-  font-size: 1.05rem;
-  color: #d9ae4c; /* gold titles */
+  font-size: 1.1rem;
+  color: #d9ae4c;
 }
 
 .gig-meta {
   font-size: 0.85rem;
+  color: #bbb;
+  margin-top: 0.35rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* Gig extra info */
+.gig-description {
+  margin-top: 6px;
+  font-style: italic;
   color: #aaa;
-  margin-top: 0.25rem;
 }
 
-.gig-meta span {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  margin-right: 0.75rem;
+.gig-directions {
+  margin-top: 6px;
+  color: #bbb;
 }
 
-/* Buttons */
+.gig-flags {
+  margin-top: 8px;
+}
+
+.flag {
+  display: inline-block;
+  padding: 3px 8px;
+  font-size: 0.75rem;
+  border-radius: 6px;
+  margin-right: 6px;
+  font-weight: 600;
+}
+
+.flag.ea {
+  background: #2b6cb0;
+  color: #fff;
+}
+.flag.p {
+  background: #2f855a;
+  color: #fff;
+}
+
+/* ===== Buttons ===== */
 button {
-  padding: 0.45rem 0.9rem;
+  padding: 0.5rem 1rem;
   border-radius: 6px;
   border: none;
   cursor: pointer;
@@ -158,12 +182,12 @@ button:hover {
 }
 
 button.edit-btn {
-  background: #d9ae4c; /* gold */
+  background: #d9ae4c;
   color: #000;
 }
 
 button.delete-btn {
-  background: #dc2626; /* red */
+  background: #dc2626;
   color: #fff;
 }
 
@@ -173,17 +197,61 @@ button.cancel-btn {
   border: 1px solid #666;
 }
 
-/* Embed snippet */
+.export-btn {
+  padding: 6px 14px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.export-btn:hover {
+  background: #43a047;
+  transform: scale(1.05);
+}
+
+/* ===== Filter Bar ===== */
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.filter-bar button {
+  padding: 6px 14px;
+  border: 1px solid #444;
+  background: #1a1a1a;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.2s ease, border 0.2s ease;
+}
+
+.filter-bar button:hover {
+  background: #2a2a2a;
+}
+
+.filter-bar button.active {
+  background: #d9ae4c;
+  color: #000;
+  border-color: #d9ae4c;
+  font-weight: 600;
+}
+
+/* ===== Embed snippet ===== */
 pre {
-  background: #000;
+  background: #111;
   color: #d9ae4c;
   padding: 1rem;
   border-radius: 10px;
   overflow-x: auto;
   font-size: 0.9rem;
-  border: 1px solid #d9ae4c;
+  border: 1px solid #2a2a2a;
 }
 pre code {
   font-family: "Fira Code", monospace;
-  line-height: 1.5;
+  line-height: 1.6;
 }
