@@ -66,6 +66,8 @@ useEffect(() => {
     const now = new Date();
     let result = [...gigs];
 
+    result = result.filter((g) => !g.ea_public_only && !g.p_public_only); 
+
     // upcoming/past/all
     if (filter === "upcoming") {
       result = result.filter((g) => new Date(g.date_time) >= now);

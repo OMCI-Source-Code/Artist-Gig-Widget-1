@@ -49,45 +49,51 @@ useEffect(() => {
 
 
   // --- filtering ---
-  function applyFilter(gigs) {
-    const now = new Date();
-    let result = [...gigs];
+ function applyFilter(gigs) {
+  const now = new Date();
+  let result = [...gigs];
 
-    // upcoming/past/all
-    if (filter === "upcoming") {
-      result = result.filter((g) => new Date(g.date_time) >= now);
-    } else if (filter === "past") {
-      result = result.filter((g) => new Date(g.date_time) < now);
-    }
+  // ✅ Only show gigs where at least one "public only" flag is set
+  result = result.filter(
+    (g) => g.ea_public_only || g.p_public_only
+  );
 
-    // search
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      result = result.filter(
-        (g) =>
-          g.title.toLowerCase().includes(q) ||
-          g.venue.toLowerCase().includes(q) ||
-          g.artist_name.toLowerCase().includes(q) ||
-          (g.description || "").toLowerCase().includes(q) ||
-          (g.directions || "").toLowerCase().includes(q)
-      );
-    }
-
-    // start date filter
-    if (startDate) {
-      const chosen = new Date(startDate);
-      result = result.filter((g) => new Date(g.date_time) >= chosen);
-    }
-
-    // sort
-    if (sort === "soonest") {
-      result.sort((a, b) => new Date(a.date_time) - new Date(b.date_time));
-    } else if (sort === "latest") {
-      result.sort((a, b) => new Date(b.date_time) - new Date(a.date_time));
-    }
-
-    return result;
+  // upcoming/past/all
+  if (filter === "upcoming") {
+    result = result.filter((g) => new Date(g.date_time) >= now);
+  } else if (filter === "past") {
+    result = result.filter((g) => new Date(g.date_time) < now);
   }
+
+  // search
+  if (search.trim()) {
+    const q = search.toLowerCase();
+    result = result.filter(
+      (g) =>
+        g.title.toLowerCase().includes(q) ||
+        g.venue.toLowerCase().includes(q) ||
+        g.artist_name.toLowerCase().includes(q) ||
+        (g.description || "").toLowerCase().includes(q) ||
+        (g.directions || "").toLowerCase().includes(q)
+    );
+  }
+
+  // start date filter
+  if (startDate) {
+    const chosen = new Date(startDate);
+    result = result.filter((g) => new Date(g.date_time) >= chosen);
+  }
+
+  // sort
+  if (sort === "soonest") {
+    result.sort((a, b) => new Date(a.date_time) - new Date(b.date_time));
+  } else if (sort === "latest") {
+    result.sort((a, b) => new Date(b.date_time) - new Date(a.date_time));
+  }
+
+  return result;
+}
+
 
   if (loading) return <div className="loading">Loading gigs…</div>;
   if (!gigs.length) return <div className="empty">No gigs yet.</div>;
