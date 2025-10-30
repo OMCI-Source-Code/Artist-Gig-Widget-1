@@ -6,11 +6,12 @@ function getQueryParam(name) {
 }
 
 // Build base API URL
-let base =
+const base =
   getQueryParam("api") ||
   window.GIG_WIDGET_API ||
   import.meta.env.VITE_API_URL ||
-  "http://localhost:4000/api";
+  (import.meta.env.DEV ? "http://localhost:4000/api" : "https://artist-gig-widget-server.vercel.app/api");
+
 
 // Ensure it ends with /api
 if (!base.endsWith("/api")) {
