@@ -1,6 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import WidgetArtist from "./components/WidgetArtist.jsx";
+import WidgetArtist from "./components/ArtistWidget.jsx";
 
 document.querySelectorAll('[data-gig-widget]').forEach((el) => {
   const artistId = el.dataset.artistId;
