@@ -4,7 +4,9 @@ import { useLocation } from "react-router-dom";
 import { fetchArtistGigs } from "../api";
 import "../styles/widget.css";
 
-export default function WidgetArtist() {
+export default function WidgetArtist({ embedArtistId, embedView }) {
+  const artistId = embedArtistId || new URLSearchParams(window.location.search).get("artistId");
+  const view = embedView || (new URLSearchParams(window.location.search).get("view") || "list");
   const location = useLocation();
   const [gigs, setGigs] = useState([]);
   const [loading, setLoading] = useState(true);
