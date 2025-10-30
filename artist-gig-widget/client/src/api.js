@@ -9,8 +9,7 @@ function getQueryParam(name) {
 const base =
   getQueryParam("api") ||
   window.GIG_WIDGET_API ||
-  import.meta.env.VITE_API_URL ||
-  (import.meta.env.DEV ? "http://localhost:4000/api" : "https://artist-gig-widget-server.vercel.app/api");
+  import.meta.env.VITE_API_URL;
 
 
 // Ensure it ends with /api
