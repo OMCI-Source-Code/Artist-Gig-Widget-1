@@ -35,7 +35,7 @@ function Home() {
       <h3>Embed examples</h3>
       <code>
         {`<div data-gig-widget data-type="artist" data-artist-id="1" data-view="list"></div>
-<script src="http://localhost:5173/embed.js"></script>`}
+<script src="https://artist-gig-widget-server.vercel.app/embed.js"></script>`}
       </code>
     </div>
   );
