@@ -19,8 +19,6 @@ export default function WidgetArtist({ embedArtistId, embedView }) {
 
   // query params (from iframe embed)
   const params = new URLSearchParams(location.search);
-  const artistId = params.get("artistId");
-  const view = params.get("view") || "list";
 
   useEffect(() => {
     async function load() {
