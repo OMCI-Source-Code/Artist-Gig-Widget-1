@@ -8,7 +8,7 @@ export default defineConfig({
   build: {
     outDir: 'dist/embed', 
     lib: {
-      entry: resolve(__dirname, 'src/embed.js'), 
+      entry: resolve(__dirname, 'src/embed.jsx'), 
       name: 'ArtistGigWidget',                   
       fileName: 'embed',                         
     },
