@@ -9,7 +9,9 @@ function getQueryParam(name) {
 const base =
   getQueryParam("api") ||
   window.GIG_WIDGET_API ||
-  import.meta.env.VITE_API_URL;
+  import.meta.env.VITE_API_URL ||
+  "https://artist-gig-widget-server.onrender.com/api";
+
 
 
 // Ensure it ends with /api
