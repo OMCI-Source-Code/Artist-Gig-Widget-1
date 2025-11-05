@@ -6,7 +6,7 @@ function getQueryParam(name) {
 }
 
 // Build base API URL
-const base =
+let base =
   getQueryParam("api") ||
   window.GIG_WIDGET_API ||
   import.meta.env.VITE_API_URL ||
