@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { login, register } from '../api.js';
 
 
@@ -12,21 +12,27 @@ const [artist, setArtist] = useState(JSON.parse(localStorage.getItem('artist') |
   return new URL(window.location.href).searchParams.get(name);
 }
 
-// Build base API URL
-let base =
-  getQueryParam("api") ||
-  window.GIG_WIDGET_API ||
-  import.meta.env.VITE_API_URL ||
-  "https://artist-gig-widget-server.onrender.com/api";
+useEffect(()=>{
+ let queryThing = getQueryParam("api");
+    let windowThing = window.GIG_WIDGET_API;
+    let envVar = import.meta.env.VITE_API_URL;
 
-let queryThing = getQueryParam("api");
-let windowThing = window.GIG_WIDGET_API;
-let envVar = import.meta.env.VITE_API_URL;
+    let base =
+      queryThing ||
+      windowThing ||
+      envVar ||
+      "https://artist-gig-widget-server.onrender.com/api";
 
-console.log("queryThing:", queryThing);
-console.log("windowThing:", windowThing);
-console.log("envVar:", envVar);
-  console.log("Api url:", base);
+    if (!base.endsWith("/api")) {
+      base = base.replace(/\/$/, "") + "/api";
+    }
+
+    console.log("queryThing:", queryThing);
+    console.log("windowThing:", windowThing);
+    console.log("envVar:", envVar);
+    console.log("API_URL:", base);
+}, [])
+
 
 async function submit(e) {
   e.preventDefault();
