@@ -12,26 +12,15 @@ const [artist, setArtist] = useState(JSON.parse(localStorage.getItem('artist') |
   return new URL(window.location.href).searchParams.get(name);
 }
 
-useEffect(()=>{
- let queryThing = getQueryParam("api");
-    let windowThing = window.GIG_WIDGET_API;
-    let envVar = import.meta.env.VITE_API_URL;
-
-    let base =
-      queryThing ||
-      windowThing ||
-      envVar ||
-      "https://artist-gig-widget-server.onrender.com/api";
-
-    if (!base.endsWith("/api")) {
-      base = base.replace(/\/$/, "") + "/api";
-    }
-
-    console.log("queryThing:", queryThing);
-    console.log("windowThing:", windowThing);
-    console.log("envVar:", envVar);
-    console.log("API_URL:", base);
-}, [])
+const [apiDebug, setApiDebug] = useState({});
+useEffect(() => {
+  const queryThing = new URL(window.location.href).searchParams.get("api");
+  const windowThing = window.GIG_WIDGET_API;
+  const envVar = import.meta.env.VITE_API_URL;
+  let base = queryThing || windowThing || envVar || "https://artist-gig-widget-server.onrender.com/api";
+  if (!base.endsWith("/api")) base = base.replace(/\/$/, "") + "/api";
+  setApiDebug({ queryThing, windowThing, envVar, base });
+}, []);
 
 
 async function submit(e) {
@@ -75,7 +64,7 @@ Switch to {mode === 'login' ? 'Register' : 'Login'}
 <div>Artist ID: <code>{artist.id}</code></div>
 </div>
 )}
-  <p>{queryThing} {windowThing} {envVar} {base}</p>
+  <p style={{fontSize:12, color:"#333"}}>API debug: {JSON.stringify(apiDebug)}</p>
 </div>
 );
 }
