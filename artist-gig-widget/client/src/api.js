@@ -29,7 +29,7 @@ if (!base.endsWith("/api")) {
 if (base == "http://localhost:4000/api"){
   base = "https://artist-gig-widget-server.onrender.com/api";
 }
-console.log("API_URL:", base);
+console.log("bad api url:", base);
 
 // ---- Central API wrapper ----
 export async function apiFetch(path, options = {}) {
