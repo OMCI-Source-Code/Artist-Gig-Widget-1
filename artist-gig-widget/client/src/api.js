@@ -12,6 +12,14 @@ let base =
   import.meta.env.VITE_API_URL ||
   "https://artist-gig-widget-server.onrender.com/api";
 
+queryThing = getQueryParam("api");
+windowThing = window.GIG_WIDGET_API;
+envVar = import.meta.env.VITE_API_URL;
+
+console.log("queryThing:", queryThing);
+console.log("windowThing:", windowThing);
+console.log("envVar:", envVar);
+
 
 
 // Ensure it ends with /api
