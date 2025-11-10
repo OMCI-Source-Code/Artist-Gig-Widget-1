@@ -7,7 +7,26 @@ const [mode, setMode] = useState('login');
 const [form, setForm] = useState({ name: '', website: '', email: '', password: '' });
 const [token, setToken] = useState(localStorage.getItem('token'));
 const [artist, setArtist] = useState(JSON.parse(localStorage.getItem('artist') || 'null'));
+ function getQueryParam(name) {
+  if (typeof window === "undefined") return null;
+  return new URL(window.location.href).searchParams.get(name);
+}
 
+// Build base API URL
+let base =
+  getQueryParam("api") ||
+  window.GIG_WIDGET_API ||
+  import.meta.env.VITE_API_URL ||
+  "https://artist-gig-widget-server.onrender.com/api";
+
+let queryThing = getQueryParam("api");
+let windowThing = window.GIG_WIDGET_API;
+let envVar = import.meta.env.VITE_API_URL;
+
+console.log("queryThing:", queryThing);
+console.log("windowThing:", windowThing);
+console.log("envVar:", envVar);
+  console.log("Api url:", base);
 
 async function submit(e) {
   e.preventDefault();
@@ -50,6 +69,7 @@ Switch to {mode === 'login' ? 'Register' : 'Login'}
 <div>Artist ID: <code>{artist.id}</code></div>
 </div>
 )}
+  <p>{queryThing} {windowThing} {envVar} {base}</p>
 </div>
 );
 }
