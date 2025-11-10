@@ -18,7 +18,9 @@ let base =
 if (!base.endsWith("/api")) {
   base = base.replace(/\/$/, "") + "/api";
 }
-
+if (base == "http://localhost:4000/api"){
+  base = "https://artist-gig-widget-server.onrender.com/api";
+}
 console.log("API_URL:", base);
 
 // ---- Central API wrapper ----
