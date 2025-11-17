@@ -9,7 +9,7 @@
 
     export const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: false, // set to { rejectUnauthorized: false } WHEN cloud hosting
+    ssl: { rejectUnauthorized: false }, // set to { rejectUnauthorized: false } WHEN cloud hosting
     });
 
     export async function query(text, params) {
