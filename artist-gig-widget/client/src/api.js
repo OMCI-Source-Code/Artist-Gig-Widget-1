@@ -10,9 +10,9 @@ let base =
   getQueryParam("api") ||
   window.GIG_WIDGET_API ||
   import.meta.env.VITE_API_URL ||
-  "http://localhost:4000/api";
+  "https://artist-gig-widget-server.onrender.com/api";
 
-// Ensure it ends with /api
+// Ensure base ends with /api
 if (!base.endsWith("/api")) {
   base = base.replace(/\/$/, "") + "/api";
 }

@@ -11,13 +11,18 @@
     const script =
       document.currentScript ||
       document.querySelector('script[src*="embed.js"]');
-    const origin = new URL(script.src).origin;
+    const origin = "https://artist-gig-widget-server.onrender.com";
+    const scriptApi =
+      script?.getAttribute("data-api") ||
+      script?.dataset?.api ||
+      window.GIG_WIDGET_API;
 
     containers.forEach(function (el) {
-      const apiOrigin =
+      /*const apiOrigin =
         el.getAttribute("data-api") ||
-        window.GIG_WIDGET_API ||
-        origin.replace(/\/$/, "") + "/api";
+        scriptApi ||
+        origin.replace(/\/$/, "") + "/api";*/
+        
 
       const type = el.getAttribute("data-type") || "public"; // "public" or "artist"
       const artistId = el.getAttribute("data-artist-id") || "";
