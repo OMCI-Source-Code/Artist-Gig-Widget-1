@@ -23,11 +23,10 @@
         scriptApi ||
         origin.replace(/\/$/, "") + "/api";*/
 
-        const apiOrigin =
+const apiOrigin =
   el.getAttribute("data-api") ||
   script?.getAttribute("data-api") ||
-  window.GIG_WIDGET_API ||
-  origin.replace(/\/$/, "") + "/api";
+  "https://artist-gig-widget-server.onrender.com/api";
 
         
 
