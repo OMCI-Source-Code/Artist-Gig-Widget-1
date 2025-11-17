@@ -22,6 +22,13 @@
         el.getAttribute("data-api") ||
         scriptApi ||
         origin.replace(/\/$/, "") + "/api";*/
+
+        const apiOrigin =
+  el.getAttribute("data-api") ||
+  script?.getAttribute("data-api") ||
+  window.GIG_WIDGET_API ||
+  origin.replace(/\/$/, "") + "/api";
+
         
 
       const type = el.getAttribute("data-type") || "public"; // "public" or "artist"
