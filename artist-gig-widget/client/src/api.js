@@ -12,7 +12,7 @@ let base =
   import.meta.env.VITE_API_URL ||
   "https://artist-gig-widget-server.onrender.com/api";
 
-// Ensure base ends with /api
+// Ensure correct trailing /api
 if (!base.endsWith("/api")) {
   base = base.replace(/\/$/, "") + "/api";
 }

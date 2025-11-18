@@ -22,6 +22,12 @@
         el.getAttribute("data-api") ||
         scriptApi ||
         origin.replace(/\/$/, "") + "/api";*/
+
+const apiOrigin =
+  el.getAttribute("data-api") ||
+  script?.getAttribute("data-api") ||
+  "https://artist-gig-widget-server.onrender.com/api";
+
         
 
       const type = el.getAttribute("data-type") || "public"; // "public" or "artist"
