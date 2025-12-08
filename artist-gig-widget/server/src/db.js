@@ -1,10 +1,11 @@
        import dotenv from 'dotenv';
-    dotenv.config();
+    dotenv.config({ path: ".env.development" })
     console.log("DB URL:", process.env.DATABASE_URL);
     console.log("ENV file loaded, DATABASE_URL:", process.env.DATABASE_URL);
    import pkg from "pg";
     const { Pool } = pkg;
-
+import bcrypt from "bcryptjs";
+console.log(bcrypt.hashSync("GodIsGood$7", 12));
 
 
     export const pool = new Pool({

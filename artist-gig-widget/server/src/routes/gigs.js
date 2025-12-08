@@ -81,6 +81,7 @@ router.put("/:id", authMiddleware, async (req, res) => {
       private: isPrivate,
       eaPublicOnly,
       pPublicOnly,
+      approved,
     } = req.body;
 
     const { rows } = await query(
@@ -94,8 +95,9 @@ router.put("/:id", authMiddleware, async (req, res) => {
            directions=$7,
            private=$8,
            ea_public_only=$9,
-           p_public_only=$10
-       WHERE id=$11 AND artist_id=$12
+           p_public_only=$10,
+           approved=$11
+       WHERE id=$12 AND artist_id=$13
        RETURNING *`,
       [
         title,
@@ -108,6 +110,7 @@ router.put("/:id", authMiddleware, async (req, res) => {
         isPrivate || false,
         eaPublicOnly || false,
         pPublicOnly || false,
+        approved,
         id,
         req.user.id,
       ]
@@ -154,6 +157,17 @@ router.get("/public", async (req, res) => {
        JOIN artists ON gigs.artist_id = artists.id
        WHERE gigs.private = false
        ORDER BY date_time ASC`
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error("Error fetching public gigs:", err);
+    res.status(500).json({ error: "Failed to fetch gigs" });
+  }
+});
+router.get("/all", async (req, res) => {
+  try {
+    const { rows } = await query(
+      `SELECT * FROM gigs ORDER BY date_time ASC`
     );
     res.json(rows);
   } catch (err) {

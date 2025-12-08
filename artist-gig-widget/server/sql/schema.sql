@@ -7,6 +7,14 @@ password_hash TEXT NOT NULL,
 created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+CREATE TABLE IF NOT EXISTS admins (
+id SERIAL PRIMARY KEY,
+name VARCHAR(255) NOT NULL,
+email VARCHAR(255) UNIQUE NOT NULL,
+password_hash TEXT NOT NULL,
+created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+)
+
 
 CREATE TABLE IF NOT EXISTS gigs (
 id SERIAL PRIMARY KEY,
@@ -18,7 +26,8 @@ description TEXT,
 link TEXT,
 private BOOLEAN NOT NULL DEFAULT false,
 created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+approved BOOLEAN NOT NULL DEFAULT false
 );
 
 

@@ -11,13 +11,24 @@
     const script =
       document.currentScript ||
       document.querySelector('script[src*="embed.js"]');
-    const origin = new URL(script.src).origin;
+    const origin = "https://artist-gig-widget-server.onrender.com";
+    const scriptApi =
+      script?.getAttribute("data-api") ||
+      script?.dataset?.api ||
+      window.GIG_WIDGET_API;
 
     containers.forEach(function (el) {
+      /*const apiOrigin =
+        el.getAttribute("data-api") ||
+        scriptApi ||
+        origin.replace(/\/$/, "") + "/api";*/
+
       const apiOrigin =
         el.getAttribute("data-api") ||
-        window.GIG_WIDGET_API ||
-        origin.replace(/\/$/, "") + "/api";
+        script?.getAttribute("data-api") ||
+        "https://artist-gig-widget-server.onrender.com/api";
+
+
 
       const type = el.getAttribute("data-type") || "public"; // "public" or "artist"
       const artistId = el.getAttribute("data-artist-id") || "";
@@ -158,16 +169,26 @@
 
           // Iframe
           const iframe = document.createElement("iframe");
-          iframe.src =
-            type === "artist"
-              ? `${origin}/#/widget/artist?artistId=${encodeURIComponent(
-                  artistId
-                )}&view=${encodeURIComponent(view)}&api=${encodeURIComponent(
-                  apiOrigin
-                )}`
-              : `${origin}/#/widget/global?view=${encodeURIComponent(
-                  view
-                )}&api=${encodeURIComponent(apiOrigin)}`;
+          // Determine iframe source
+          let iframeSrc;
+
+          if (view === "calendar") {
+            // Calendar widget
+            iframeSrc = `${origin}/#/widget/calendar?api=${encodeURIComponent(apiOrigin)}`;
+          } else if (type === "artist") {
+            // artist widget
+            iframeSrc = `${origin}/#/widget/artist?artistId=${encodeURIComponent(
+              artistId
+            )}&view=${encodeURIComponent(view)}&api=${encodeURIComponent(apiOrigin)}`;
+          } else {
+            // global widget
+            iframeSrc = `${origin}/#/widget/global?view=${encodeURIComponent(
+              view
+            )}&api=${encodeURIComponent(apiOrigin)}`;
+          }
+
+          iframe.src = iframeSrc;
+
           iframe.style.width = "100%";
           iframe.style.height = "auto"; // initial height
           iframe.style.border = "0";

@@ -32,27 +32,37 @@ export async function apiFetch(path, options = {}) {
     },
   });
 
+  // Read body ONCE
+  let data;
+  try {
+    data = await res.json();
+  } catch {
+    data = null; // No JSON body
+  }
+
+  // Handle errors
   if (!res.ok) {
     if (res.status === 401) {
       localStorage.removeItem("token");
       localStorage.removeItem("artist");
+      localStorage.removeItem("admin");
       window.location.href = "/login";
     }
 
-    let message;
-    try {
-      message = (await res.json()).error;
-    } catch {
-      message = await res.text();
-    }
-    throw new Error(message || "API request failed");
+    const message =
+      data?.error ||
+      data?.message ||
+      "API request failed";
+
+    throw new Error(message);
   }
 
-  return res.json();
+  return data;
 }
 
 // ---- Convenience wrappers ----
 export const fetchAllGigs    = () => apiFetch("/gigs");
+export const fetchGigs       = () => apiFetch("/gigs/all");
 export const fetchMyGigs     = () => apiFetch("/gigs/mine");
 export const fetchArtistGigs = (id) => apiFetch(`/artists/${id}/gigs`);
 export const createGig       = (gig) => apiFetch("/gigs", { method: "POST", body: JSON.stringify(gig) });
@@ -63,6 +73,7 @@ export const fetchPublicGigs = () => apiFetch("/gigs/public");
 
 export const register        = (artist) => apiFetch("/auth/register", { method: "POST", body: JSON.stringify(artist) });
 export const login           = (creds)  => apiFetch("/auth/login", { method: "POST", body: JSON.stringify(creds) });
+export const adminLogin      = (creds)  => apiFetch("/admin/login", { method: "POST", body: JSON.stringify(creds) });
 export const logout          = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("artist");

@@ -1,4 +1,3 @@
-// client/src/pages/WidgetArtist.jsx
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { fetchArtistGigs } from "../api";
