@@ -1,5 +1,4 @@
 (function () {
-  // Prevent double init
   if (window.__GIG_WIDGET_INIT__) return;
   window.__GIG_WIDGET_INIT__ = true;
 
@@ -18,10 +17,6 @@
       window.GIG_WIDGET_API;
 
     containers.forEach(function (el) {
-      /*const apiOrigin =
-        el.getAttribute("data-api") ||
-        scriptApi ||
-        origin.replace(/\/$/, "") + "/api";*/
 
       const apiOrigin =
         el.getAttribute("data-api") ||
@@ -150,7 +145,6 @@
             "transform 0.3s ease, opacity 0.3s ease";
           card.style.opacity = "0";
 
-          // Close button
           const closeBtn = document.createElement("div");
           closeBtn.innerHTML = "&times;";
           closeBtn.style.position = "absolute";

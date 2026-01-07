@@ -14,7 +14,6 @@ export default function WidgetArtist() {
   const [sort, setSort] = useState("soonest");
   const [startDate, setStartDate] = useState("");
 
-  // query params (from iframe embed)
   const params = new URLSearchParams(location.search);
   const artistId = params.get("artistId");
   const view = params.get("view") || "list";
@@ -37,44 +36,37 @@ export default function WidgetArtist() {
     load();
   }, [artistId]);
 
-// Define max height 
 const MAX_HEIGHT = 600;
 
 useEffect(() => {
   function sendHeight() {
     const widget = document.querySelector(".gig-widget");
     if (widget) {
-      // Take the visible height or scrollHeight, whichever is smaller
       const height = Math.min(widget.scrollHeight, MAX_HEIGHT);
       window.parent.postMessage({ type: "resizeWidget", height }, "*");
     }
   }
 
-  // Send height initially and whenever dependencies change
   sendHeight();
 
-  // Also update on window resize
   window.addEventListener("resize", sendHeight);
   return () => window.removeEventListener("resize", sendHeight);
 }, [gigs, filter, search, sort, startDate]);
 
 
 
-  // --- filtering ---
   function applyFilter(gigs) {
     const now = new Date();
     let result = [...gigs];
 
     result = result.filter((g) => !g.ea_public_only && !g.p_public_only); 
 
-    // upcoming/past/all
     if (filter === "upcoming") {
       result = result.filter((g) => new Date(g.date_time) >= now);
     } else if (filter === "past") {
       result = result.filter((g) => new Date(g.date_time) < now);
     }
 
-    // search
     if (search.trim()) {
       const q = search.toLowerCase();
       result = result.filter(
@@ -86,13 +78,11 @@ useEffect(() => {
       );
     }
 
-    // start date filter
     if (startDate) {
       const chosen = new Date(startDate);
       result = result.filter((g) => new Date(g.date_time) >= chosen);
     }
 
-    // sort
     if (sort === "soonest") {
       result.sort((a, b) => new Date(a.date_time) - new Date(b.date_time));
     } else if (sort === "latest") {
@@ -109,7 +99,6 @@ useEffect(() => {
 
   return (
     <div className="gig-widget">
-      {/* Controls */}
       <div className="gig-controls">
         <div className="gig-filters">
           <button
@@ -149,7 +138,6 @@ useEffect(() => {
           <option value="latest">Latest First</option>
         </select>
 
-        {/* Date filter */}
         <input
           type="date"
           className="gig-date"
@@ -158,7 +146,6 @@ useEffect(() => {
         />
       </div>
 
-      {/* Cards like public widget */}
       <div className="card-container">
         {filtered.map((gig) => (
           <div key={gig.id} className="gig-card">
@@ -179,7 +166,6 @@ useEffect(() => {
                 <p className="gig-directions">🧭 {gig.directions}</p>
               )}
 
-              {/* Flags */}
               <div className="gig-flags">
                 {gig.ea_public_only && (
                   <span className="flag ea">3 EA CEP</span>

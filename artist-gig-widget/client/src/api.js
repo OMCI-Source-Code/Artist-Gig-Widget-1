@@ -1,25 +1,19 @@
-// client/src/api.js
 
 function getQueryParam(name) {
   if (typeof window === "undefined") return null;
   return new URL(window.location.href).searchParams.get(name);
 }
 
-// Build base API URL
 let base =
   getQueryParam("api") ||
   window.GIG_WIDGET_API ||
   import.meta.env.VITE_API_URL ||
   "https://artist-gig-widget-server.onrender.com/api";
 
-// Ensure correct trailing /api
-if (!base.endsWith("/api")) {
-  base = base.replace(/\/$/, "") + "/api";
-}
+
 
 console.log("API_URL:", base);
 
-// ---- Central API wrapper ----
 export async function apiFetch(path, options = {}) {
   const token = localStorage.getItem("token");
 
@@ -32,7 +26,6 @@ export async function apiFetch(path, options = {}) {
     },
   });
 
-  // Read body ONCE
   let data;
   try {
     data = await res.json();
@@ -40,7 +33,6 @@ export async function apiFetch(path, options = {}) {
     data = null; // No JSON body
   }
 
-  // Handle errors
   if (!res.ok) {
     if (res.status === 401) {
       localStorage.removeItem("token");
@@ -60,7 +52,6 @@ export async function apiFetch(path, options = {}) {
   return data;
 }
 
-// ---- Convenience wrappers ----
 export const fetchAllGigs    = () => apiFetch("/gigs");
 export const fetchGigs       = () => apiFetch("/gigs/all");
 export const fetchMyGigs     = () => apiFetch("/gigs/mine");
@@ -74,9 +65,10 @@ export const fetchPublicGigs = () => apiFetch("/gigs/public");
 export const register        = (artist) => apiFetch("/auth/register", { method: "POST", body: JSON.stringify(artist) });
 export const login           = (creds)  => apiFetch("/auth/login", { method: "POST", body: JSON.stringify(creds) });
 export const adminLogin      = (creds)  => apiFetch("/admin/login", { method: "POST", body: JSON.stringify(creds) });
-export const logout          = () => {
+
+export const logout = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("artist");
+  localStorage.removeItem("admin");
   window.location.href = "/login";
-  console.log("Fetching:", `${base}${path}`);
 };

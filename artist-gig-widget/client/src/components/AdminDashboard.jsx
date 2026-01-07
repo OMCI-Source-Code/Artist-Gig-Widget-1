@@ -79,7 +79,6 @@ function Inner() {
     }
   };
 
-  //✅ CSV Export with filters
   const exportCSV = () => {
     if (!filteredGigs.length) {
       alert("No gigs to export.");

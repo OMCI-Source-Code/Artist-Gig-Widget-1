@@ -3,6 +3,7 @@ import { apiFetch } from "../api.js";
 import Protected from "./ProtectedRoute.jsx";
 import GigForm from "./GigForm.jsx";
 import "../styles/dashboard.css";
+const WIDGET_ORIGIN = import.meta.env.VITE_WIDGET_ORIGIN;
 
 export default function Dashboard() {
   return (
@@ -226,7 +227,7 @@ const exportCSV = () => {
       <hr style={{ margin: "24px 0" }} />
       <h3>Embed Snippets</h3>
       <pre>{`<div data-gig-widget data-type="artist" data-artist-id="${artist?.id}" data-view="list"></div>
-<script src="${window.location.origin}/embed.js"></script>`}</pre>
+<script src="${WIDGET_ORIGIN}/embed.js"></script>`}</pre>
     </div>
   );
 }

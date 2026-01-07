@@ -59,11 +59,11 @@ function Home() {
     <div>
       <h1>Gig Widgets</h1>
       <p>Use the links above to view widgets or log in to the dashboard.</p>
-      <h3>Embed examples</h3>
+      {/* <h3>Embed examples</h3>
       <code>
         {`<div data-gig-widget data-type="artist" data-artist-id="1" data-view="list"></div>
 <script src="https://artist-gig-widget-server.vercel.app/embed.js"></script>`}
-      </code>
+      </code> */}
     </div>
   );
 }

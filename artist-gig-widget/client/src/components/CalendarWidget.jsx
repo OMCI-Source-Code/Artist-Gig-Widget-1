@@ -8,17 +8,15 @@ export default function CalendarWidget() {
   const [current, setCurrent] = useState(new Date());
 
   useEffect(() => {
-    fetch(`${api}/gigs/public`)
+    fetch(`${api}/gigs/all`)
       .then((res) => res.json())
       .then((data) => {
-        // Only approved gigs
         const approved = data.filter((g) => g.approved === true);
         setGigs(approved);
       })
       .catch((err) => console.error("Calendar fetch err:", err));
   }, [api]);
 
-  // Resize iframe height
   useEffect(() => {
     const sendHeight = () => {
       window.parent.postMessage(
@@ -33,7 +31,6 @@ export default function CalendarWidget() {
     return () => obs.disconnect();
   }, []);
 
-  // Calendar helpers
   const year = current.getFullYear();
   const month = current.getMonth();
   const firstDay = new Date(year, month, 1);
@@ -49,10 +46,9 @@ export default function CalendarWidget() {
     setCurrent(new Date(year, month + 1, 1));
   };
 
-  // Build calendar cells
   const cells = [];
   for (let i = 0; i < firstWeekday; i++) {
-    cells.push(null); // empty cell
+    cells.push(null);
   }
   for (let day = 1; day <= daysInMonth; day++) {
     cells.push(day);
