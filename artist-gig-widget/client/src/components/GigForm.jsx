@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from "react";
 import "../styles/gigForm.css";
+import { useAuth } from "../context/AuthContext.jsx";
 
 export default function GigForm({ initial = {}, onSave, onCancel }) {
+  const { user } = useAuth();
   const emptyForm = {
     title: "",
     date_time: "",
-    end_time: "",        // NEW
+    end_time: "",
     venue: "",
     description: "",
     link: "",
-    directions: "",      // NEW
+    directions: "",
     private: false,
-    eaPublicOnly: false, // NEW
-    pPublicOnly: false,  // NEW
+    eaPublicOnly: false,
+    pPublicOnly: false,
+    coop_event: false,
+    approved: false
   };
 
   const [form, setForm] = useState(emptyForm);
@@ -30,6 +34,9 @@ export default function GigForm({ initial = {}, onSave, onCancel }) {
         private: initial.private || false,
         eaPublicOnly: initial.eaPublicOnly || false,
         pPublicOnly: initial.pPublicOnly || false,
+        coop_event: initial.coop_event || false,
+        approved: false
+
       });
     } else {
       setForm(emptyForm);
@@ -129,32 +136,40 @@ export default function GigForm({ initial = {}, onSave, onCancel }) {
         />
       </label>
 
-      <label className="checkbox">
-        <input
-          type="checkbox"
-          checked={form.private}
-          onChange={(e) => update("private", e.target.checked)}
-        />
-        Private (show only on your widget)
-      </label>
+      {user?.role === "admin" && (
+        <label className="checkbox">
+          <input
+            type="checkbox"
+            checked={form.coop_event}
+            onChange={(e) => update("coop_event", e.target.checked)}
+          />
+          Coop Event
+        </label>
+      )}
+      {user?.role === "artist" && (
+        <><label className="checkbox">
+          <input
+            type="checkbox"
+            checked={form.private}
+            onChange={(e) => update("private", e.target.checked)} />
+          Private (show only on your widget)
+        </label>
+        <label className="checkbox">
+            <input
+              type="checkbox"
+              checked={form.eaPublicOnly}
+              onChange={(e) => update("eaPublicOnly", e.target.checked)} />
+            3 EA CEP (show only on coop widget)
+          </label>
+          <label className="checkbox">
+            <input
+              type="checkbox"
+              checked={form.pPublicOnly}
+              onChange={(e) => update("pPublicOnly", e.target.checked)} />
+            3P (show only on coop widget)
+          </label></>
+      )}
 
-      <label className="checkbox">
-        <input
-          type="checkbox"
-          checked={form.eaPublicOnly}
-          onChange={(e) => update("eaPublicOnly", e.target.checked)}
-        />
-        3 EA CEP (show only on coop widget)
-      </label>
-
-      <label className="checkbox">
-        <input
-          type="checkbox"
-          checked={form.pPublicOnly}
-          onChange={(e) => update("pPublicOnly", e.target.checked)}
-        />
-        3P (show only on coop widget)
-      </label>
 
       <div className="actions">
         <button type="submit" className="save">

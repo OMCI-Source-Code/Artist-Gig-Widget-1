@@ -1,3 +1,4 @@
+//this version of embed.js is for production. what changes here is what goes live on peoples site
 (function () {
   // Prevent double init
   if (window.__GIG_WIDGET_INIT__) return;
@@ -70,7 +71,7 @@
           button.style.width = "56px";
           button.style.height = "56px";
           button.style.borderRadius = "50%";
-          button.style.background = key === "public" ? "#007bff" : "#28a745";
+          button.style.background = key === "public" ? "#007bff" : "white";
           button.style.color = "#fff";
           button.style.display = "flex";
           button.style.alignItems = "center";

@@ -6,8 +6,7 @@ import { fileURLToPath } from "url";
 
 import gigsRouter from "./routes/gigs.js";
 import authRouter from "./routes/auth.js";
-import artistsRouter from "./routes/artists.js";
-import adminsRouter from "./routes/admins.js";
+
 
 dotenv.config();
 
@@ -23,9 +22,10 @@ app.use(express.json());
 
 app.use("/api/gigs", gigsRouter);
 app.use("/api/auth", authRouter);
-app.use("/api/artists", artistsRouter);
-app.use("/api/admin", adminsRouter);
 
+app.get("/api/auth/me-test", (req, res) => {
+  res.json({ ok: true });
+});
 app.use(express.static(distPath));
 app.get("*", (req, res) => {
   res.sendFile(path.join(distPath, "index.html"));

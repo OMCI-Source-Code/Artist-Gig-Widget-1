@@ -65,7 +65,7 @@
           button.style.width = "56px";
           button.style.height = "56px";
           button.style.borderRadius = "50%";
-          button.style.background = key === "public" ? "#007bff" : "#28a745";
+          button.style.background = key === "public" ? "#007bff" : "#f6410fff";
           button.style.color = "#fff";
           button.style.display = "flex";
           button.style.alignItems = "center";

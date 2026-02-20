@@ -1,0 +1,83 @@
+/* Style Sheet For the calendar widget */
+.calendar-widget {
+      font-family: "Inter", Arial, sans-serif;
+      background: #111;
+      border: solid 1px #d9ae4c;
+      color: #d9ae4c;
+      padding: 16px;
+      border-radius: 12px;
+      width: 100%;
+      box-sizing: border-box;
+}
+
+.header{
+      display: flex;
+      justify-self: center;
+      column-gap: 50px;
+      font-size: 30px;
+}
+
+.cal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      justify-self: center;
+      width: 60%;
+      column-gap: 50px;
+      font-size: 30px;
+}
+
+.cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-template-rows: repeat(6, 1fr);
+      border: solid 0.1px #d9ae4c;
+      border-radius: 0px 0px 12px 12px;
+}
+
+.day-name-container {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-template-rows: repeat(1, 1fr);
+      border: solid 0.1px #d9ae4c;
+      border-radius: 12px 12px 0px 0px;
+}
+
+.day-name {
+      font-size: 20px;
+      padding: 10px;
+      margin-bottom: 0px;
+      padding-bottom: 5px;
+}
+
+.day-cell {
+      border: solid 0.1px #d9ae4c;
+      padding: 10px;
+      height: 200px;
+}
+
+.day-number {
+      text-align: start;
+}
+
+.gig {
+      
+      border-left: solid #fff 2px;
+      padding: 10px;
+     
+      margin-top: 5px;
+      color: #fff;
+}
+.gig:hover{
+      color: #d9ae4c;
+      background-color: black;
+}
+.gigDayView{
+  color: #d9ae4c;
+  padding: 10px 5px;
+
+}
+.gigDayView:hover{
+  color: #fff;
+  background-color: #d9af4c85;
+}

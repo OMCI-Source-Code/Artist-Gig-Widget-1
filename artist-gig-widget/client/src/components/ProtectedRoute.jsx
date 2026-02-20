@@ -1,8 +1,19 @@
-import React from 'react';
+import React from "react";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
+export default function Protected({ children, requiredRole }) {
+  const { user, loading } = useAuth();
 
-export default function Protected({ children }){
-const token = localStorage.getItem('token');
-if (!token) return <p>Please log in to access the dashboard.</p>;
-return children;
+  if (loading) return null; 
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (requiredRole && user.role !== requiredRole) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
 }

@@ -1,21 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { apiFetch } from "../api.js";
-import AdminProtected from "./AdminProtected.jsx";
+import Protected from "./ProtectedRoute.jsx";
 import GigForm from "./GigForm.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 import "../styles/dashboard.css";
 
 export default function AdminDashboard() {
   return (
-    <AdminProtected>
+    <Protected requiredRole="admin">
       <Inner />
-    </AdminProtected>
+    </Protected>
   );
 }
 
 function Inner() {
   const [gigs, setGigs] = useState([]);
   const [editing, setEditing] = useState(null);
-  const [filter, setFilter] = useState("upcoming"); // ✅ filter state
+  const [filter, setFilter] = useState("upcoming");
+  const { user } = useAuth();
+  const admin = user?.admin;
 
   async function load() {
     try {
@@ -30,7 +33,6 @@ function Inner() {
     load();
   }, []);
 
-  // ✅ filter gigs like in public widget
   const now = new Date();
   const filteredGigs = gigs.filter((g) => {
     const start = new Date(g.date_time);
@@ -58,12 +60,18 @@ function Inner() {
 
   const handleDelete = async (id) => {
     if (!confirm("Delete gig?")) return;
-    await apiFetch(`/gigs/${id}`, { method: "DELETE" });
-    await load();
+    try{
+      await apiFetch(`/gigs/${id}`, { method: "DELETE" });
+      await load();
+    } catch (e){
+      alert("Falied to delete event");
+      return;
+    }
   };
   
   const toggleApprove = async (gig) => {
     try {
+      console.log(gig.id, gig.approved);
       await apiFetch(`/gigs/${gig.id}`, {
         method: "PUT",
         body: JSON.stringify({ 
@@ -139,12 +147,12 @@ function Inner() {
     <div className="dashboard">
       <h2>Admin Dashboard</h2>
       <p className="artist-info">
-        {/* Artist: <strong>{artist?.name}</strong> (ID: {artist?.id}) */}
+        {<strong>{user?.name}</strong>}
       </p>
 
       <div className="dashboard-grid">
         <div className="card">
-          <h3>{editing ? "Edit Gig" : "Create Gig"}</h3>
+          <h3>{editing ? "Edit Event" : "Create Event"}</h3>
           <GigForm
             initial={editing || {}}
             onSave={(body) =>
@@ -216,6 +224,9 @@ function Inner() {
                       {g.p_public_only && (
                         <span className="flag p">3P</span>
                       )}
+                      {g.coop_event && (
+                        <span className="flag coop_event">Co-op Event</span>
+                      )}
                     </div>
                   </div>
 
@@ -255,9 +266,6 @@ function Inner() {
       <button onClick={exportCSV}>⬇️ Export My Gigs (CSV)</button>
 
       <hr style={{ margin: "24px 0" }} />
-      {/* <h3>Embed Snippets</h3>
-      <pre>{`<div data-gig-widget data-type="artist" data-artist-id="${artist?.id}" data-view="list"></div>
-<script src="${window.location.origin}/embed.js"></script>`}</pre> */}
     </div>
   );
 }

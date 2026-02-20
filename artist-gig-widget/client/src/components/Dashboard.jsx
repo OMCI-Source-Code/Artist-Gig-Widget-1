@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { apiFetch } from "../api.js";
 import Protected from "./ProtectedRoute.jsx";
 import GigForm from "./GigForm.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 import "../styles/dashboard.css";
 const WIDGET_ORIGIN = import.meta.env.VITE_WIDGET_ORIGIN;
 
@@ -14,10 +15,11 @@ export default function Dashboard() {
 }
 
 function Inner() {
-  const artist = JSON.parse(localStorage.getItem("artist") || "null");
+  const { user } = useAuth();
+  const artist = user?.artist;
   const [gigs, setGigs] = useState([]);
   const [editing, setEditing] = useState(null);
-  const [filter, setFilter] = useState("upcoming"); // ✅ filter state
+  const [filter, setFilter] = useState("upcoming"); 
 
   async function load() {
     try {
@@ -32,13 +34,13 @@ function Inner() {
     load();
   }, []);
 
-  // ✅ filter gigs like in public widget
+  
   const now = new Date();
   const filteredGigs = gigs.filter((g) => {
     const start = new Date(g.date_time);
     if (filter === "upcoming") return start >= now;
     if (filter === "past") return start < now;
-    return true; // all
+    return true; 
   });
 
   const handleCreate = async (gig) => {
@@ -60,11 +62,16 @@ function Inner() {
 
   const handleDelete = async (id) => {
     if (!confirm("Delete gig?")) return;
-    await apiFetch(`/gigs/${id}`, { method: "DELETE" });
-    await load();
+    try {
+      await apiFetch(`/gigs/${id}`, { method: "DELETE" });
+      await load();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete gig.");
+      return;
+    }
   };
 
-  // ✅ CSV Export with filters
 const exportCSV = () => {
   if (!filteredGigs.length) {
     alert("No gigs to export.");
@@ -107,7 +114,7 @@ const exportCSV = () => {
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
 
-  const filename = `${artist?.name || "artist"}-gigs-${filter}.csv`;
+  const filename = `${artist?.artist_name || "artist"}-gigs-${filter}.csv`;
 
   const link = document.createElement("a");
   link.href = url;
@@ -122,7 +129,7 @@ const exportCSV = () => {
     <div className="dashboard">
       <h2>Dashboard</h2>
       <p className="artist-info">
-        Artist: <strong>{artist?.name}</strong> (ID: {artist?.id})
+        <strong>{artist?.artist_name}</strong>
       </p>
 
       <div className="dashboard-grid">
@@ -170,7 +177,9 @@ const exportCSV = () => {
                       <span>
                         📅 {new Date(g.date_time).toLocaleString()}
                         {g.end_time
-                          ? " - " + new Date(g.end_time).toLocaleTimeString()
+                        // TODO: make this so that if the end date is the 
+                        // same as the start date, don't show the end date only show end time
+                          ? " - " + new Date(g.end_time).toLocaleString()
                           : ""}
                       </span>
                       <span>📍 {g.venue}</span>

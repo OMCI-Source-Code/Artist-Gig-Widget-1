@@ -11,7 +11,7 @@ export default function WidgetGlobal() {
   const [sort, setSort] = useState("soonest");
   const [startDate, setStartDate] = useState("");
 
-  useEffect(() => {
+  useEffect(() => { 
     async function load() {
       try {
         const data = await fetchPublicGigs();
@@ -54,9 +54,9 @@ useEffect(() => {
   let result = [...gigs];
 
   // ✅ Only show gigs where at least one "public only" flag is set
-  result = result.filter(
-    (g) => g.ea_public_only || g.p_public_only
-  );
+  // result = result.filter(
+  //   (g) => g.ea_public_only || g.p_public_only
+  // );
 
   // upcoming/past/all
   if (filter === "upcoming") {

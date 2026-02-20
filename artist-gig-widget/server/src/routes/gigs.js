@@ -5,11 +5,11 @@ import { authMiddleware } from "../middleware/auth.js";
 
 const router = express.Router();
 
-// ✅ Get gigs for the logged-in artist
+// Get gigs for the logged-in artist
 router.get("/mine", authMiddleware, async (req, res) => {
   try {
     const { rows } = await query(
-      "SELECT * FROM gigs WHERE artist_id = $1 ORDER BY date_time ASC",
+      "SELECT * FROM gigs WHERE created_by_user_id = $1 ORDER BY date_time ASC",
       [req.user.id]
     );
     res.json(rows);
@@ -19,7 +19,7 @@ router.get("/mine", authMiddleware, async (req, res) => {
   }
 });
 
-// ✅ Create a new gig
+
 router.post("/", authMiddleware, async (req, res) => {
   try {
     const {
@@ -33,7 +33,10 @@ router.post("/", authMiddleware, async (req, res) => {
       private: isPrivate,
       eaPublicOnly,
       pPublicOnly,
+      coop_event
     } = req.body;
+
+    const isCoopEvent = req.user.user_role === "admin" ? coop_event || false : false;
 
     if (!title || !date_time || !venue) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -41,8 +44,8 @@ router.post("/", authMiddleware, async (req, res) => {
 
     const { rows } = await query(
       `INSERT INTO gigs 
-        (artist_id, title, date_time, end_time, venue, description, link, directions, private, ea_public_only, p_public_only)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+        (created_by_user_id, title, date_time, end_time, venue, description, link, directions, private, ea_public_only, p_public_only, coop_event)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
        RETURNING *`,
       [
         req.user.id,
@@ -56,6 +59,7 @@ router.post("/", authMiddleware, async (req, res) => {
         isPrivate || false,
         eaPublicOnly || false,
         pPublicOnly || false,
+        isCoopEvent
       ]
     );
 
@@ -66,10 +70,28 @@ router.post("/", authMiddleware, async (req, res) => {
   }
 });
 
-// ✅ Update a gig
 router.put("/:id", authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
+
+    const gigResult = await query(
+      "SELECT * FROM gigs WHERE id=$1",
+      [id]
+    );
+
+    if (!gigResult.rows.length) {
+      return res.status(404).json({ error: "Gig not found" });
+    }
+
+    const gig = gigResult.rows[0];
+
+    if (
+      req.user.user_role !== "admin" &&
+      gig.created_by_user_id !== req.user.id
+    ) {
+      return res.status(403).json({ error: "Not authorized" });
+    }
+
     const {
       title,
       date_time,
@@ -81,8 +103,15 @@ router.put("/:id", authMiddleware, async (req, res) => {
       private: isPrivate,
       eaPublicOnly,
       pPublicOnly,
+      coop_event,
       approved,
     } = req.body;
+
+    const updatedCoop =
+      req.user.user_role === "admin" ? coop_event : gig.coop_event;
+
+    const updatedApproved =
+      req.user.user_role === "admin" ? approved : gig.approved;
 
     const { rows } = await query(
       `UPDATE gigs
@@ -96,8 +125,9 @@ router.put("/:id", authMiddleware, async (req, res) => {
            private=$8,
            ea_public_only=$9,
            p_public_only=$10,
-           approved=$11
-       WHERE id=$12 AND artist_id=$13
+           coop_event=$11,
+           approved=$12
+       WHERE id=$13
        RETURNING *`,
       [
         title,
@@ -110,15 +140,11 @@ router.put("/:id", authMiddleware, async (req, res) => {
         isPrivate || false,
         eaPublicOnly || false,
         pPublicOnly || false,
-        approved,
+        updatedCoop,
+        updatedApproved,
         id,
-        req.user.id,
       ]
     );
-
-    if (!rows.length) {
-      return res.status(404).json({ error: "Gig not found" });
-    }
 
     res.json(rows[0]);
   } catch (err) {
@@ -127,19 +153,29 @@ router.put("/:id", authMiddleware, async (req, res) => {
   }
 });
 
-// ✅ Delete a gig
 router.delete("/:id", authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
 
-    const { rows } = await query(
-      "DELETE FROM gigs WHERE id=$1 AND artist_id=$2 RETURNING id",
-      [id, req.user.id]
+    const gigResult = await query(
+      "SELECT * FROM gigs WHERE id=$1",
+      [id]
     );
 
-    if (!rows.length) {
+    if (!gigResult.rows.length) {
       return res.status(404).json({ error: "Gig not found" });
     }
+
+    const gig = gigResult.rows[0];
+
+    if (
+      req.user.user_role !== "admin" &&
+      gig.created_by_user_id !== req.user.id
+    ) {
+      return res.status(403).json({ error: "Not authorized" });
+    }
+
+    await query("DELETE FROM gigs WHERE id=$1", [id]);
 
     res.json({ success: true });
   } catch (err) {
@@ -148,13 +184,14 @@ router.delete("/:id", authMiddleware, async (req, res) => {
   }
 });
 
-// ✅ Public gigs for widget
+
+// Public gigs for widget
 router.get("/public", async (req, res) => {
   try {
     const { rows } = await query(
-      `SELECT gigs.*, artists.name AS artist_name
+      `SELECT gigs.*, artists.artist_name
        FROM gigs
-       JOIN artists ON gigs.artist_id = artists.id
+       JOIN artists ON artists.user_id = gigs.created_by_user_id
        WHERE gigs.private = false
        ORDER BY date_time ASC`
     );
@@ -164,7 +201,11 @@ router.get("/public", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch gigs" });
   }
 });
+
 router.get("/all", async (req, res) => {
+  // if (req.user.user_role !== "admin") {
+  //   return res.status(403).json({ error: "Admins only" });
+  // }
   try {
     const { rows } = await query(
       `SELECT * FROM gigs ORDER BY date_time ASC`
@@ -172,6 +213,20 @@ router.get("/all", async (req, res) => {
     res.json(rows);
   } catch (err) {
     console.error("Error fetching public gigs:", err);
+    res.status(500).json({ error: "Failed to fetch gigs" });
+  }
+});
+
+router.get("/users/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { rows } = await query(
+      "SELECT * FROM gigs WHERE created_by_user_id = $1 AND private = false ORDER BY date_time ASC",
+      [id]
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error("Error fetching artist gigs:", err);
     res.status(500).json({ error: "Failed to fetch gigs" });
   }
 });

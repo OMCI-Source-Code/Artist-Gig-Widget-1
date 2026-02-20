@@ -1,46 +1,97 @@
 // src/routes/auth.js
 import express from 'express';
 import bcrypt from 'bcryptjs';
-import { createArtist, findArtistByEmail, signToken } from '../auth.js';
+import { createArtist, findUserByEmail, signToken } from '../userAuth.js';
+import { authMiddleware } from '../middleware/auth.js';
+import { query } from '../db.js';
 
 const router = express.Router();
 
-// Register
+// Register for artists
 router.post('/register', async (req, res) => {
   try {
-    const { name, website, email, password } = req.body;
-    if (!name || !email || !password) return res.status(400).json({ error: 'Missing required fields' });
+    const { name, website, artist_name, email, password } = req.body;
+    if (!name || !email || !artist_name || !password) return res.status(400).json({ error: 'Missing required fields' });
 
-    const exists = await findArtistByEmail(email);
+    const exists = await findUserByEmail(email);
     if (exists) return res.status(409).json({ error: 'Email already registered' });
 
-    const artist = await createArtist({ name, website, email, password });
-    const token = signToken(artist);
-    res.json({ artist, token });
+    const user = await createArtist({name, website, artist_name, email, password});
+    const token = signToken(user);
+    res.json({ user, token });
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: 'Server error' });
   }
 });
 
-// Login
-router.post('/login', async (req, res) => {
+// login for users (admin and artist)
+router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    const artist = await findArtistByEmail(email);
-    if (!artist) return res.status(401).json({ error: 'Invalid credentials' });
 
-    const ok = await bcrypt.compare(password, artist.password_hash);
-    if (!ok) return res.status(401).json({ error: 'Invalid credentials' });
+    const user = await findUserByEmail(email);
+    if (!user)
+      return res.status(404).json({ error: "User not found" });
 
-    const token = signToken(artist);
-    const { password_hash, ...safe } = artist;
-    res.json({ artist: safe, token });
+    const match = await bcrypt.compare(password, user.password_hash);
+    if (!match)
+      return res.status(401).json({ error: "Invalid password" });
+
+    const token = signToken(user);
+    const { password_hash, ...safe } = user;
+    res.json({ user: safe, token });
   } catch (e) {
     console.error(e);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: "Server error" });
   }
 });
+
+router.get("/me", authMiddleware, async (req, res) => {
+  try {
+    const user = await query(
+      `
+      SELECT u.id, u.name, u.email, u.user_role,
+             a.id as artist_id, a.artist_name, a.website,
+             ad.id as admin_id
+      FROM users u
+      LEFT JOIN artists a ON a.user_id = u.id
+      LEFT JOIN admins ad ON ad.user_id = u.id
+      WHERE u.id = $1
+      `,
+      [req.user.id]
+    );
+
+    if (!user.rows.length)
+      return res.status(404).json({ error: "User not found" });
+
+    const row = user.rows[0];
+
+    res.json({
+      id: row.id,
+      name: row.name,
+      email: row.email,
+      role: row.user_role,
+      artist: row.artist_id
+        ? {
+            id: row.artist_id,
+            artist_name: row.artist_name,
+            website: row.website,
+          }
+        : null,
+      admin: row.admin_id
+        ? {
+            id: row.admin_id,
+          }
+        : null,
+    });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+
 
 
 export default router;

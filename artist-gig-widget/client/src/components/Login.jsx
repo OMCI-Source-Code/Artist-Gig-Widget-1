@@ -1,59 +1,90 @@
-import React, { useState } from 'react';
-import { login, register } from '../api.js';
+import React, { useState, useEffect } from 'react';
+import { login as apiLogin } from '../api.js';
 import { useAuth } from '../context/AuthContext.jsx';
-
+import { useNavigate } from 'react-router-dom';
 
 
 export default function Login() {
+  const navigate = useNavigate();
+
+  const [form, setForm] = useState({ email: '', password: '' });
+  const [formErrors, setFormErrors] = useState({})
+  const [isSubmit, setIsSubmit] = useState(false)
+
   const { login } = useAuth();
-  const [mode, setMode] = useState('login');
-  const [form, setForm] = useState({ name: '', website: '', email: '', password: '' });
-  const [token, setToken] = useState(localStorage.getItem('token'));
-  const [artist, setArtist] = useState(JSON.parse(localStorage.getItem('artist') || 'null'));
 
 
-  async function submit(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const res = mode === 'register'
-        ? await register(form)
-        : await login({ email: form.email, password: form.password });
 
-      setToken(res.token);
-      setArtist(res.artist);
-      localStorage.setItem('token', res.token);
-      localStorage.setItem('artist', JSON.stringify(res.artist));
-      login("user");
-      alert('Success! You can go to Dashboard now.');
-    } catch (e) {
-      alert(e.message);
+    const errors = validate(form);
+    setFormErrors(errors);
+    setIsSubmit(true);
+
+    if (Object.keys(errors).length > 0) return;
+    try {
+      console.log(form)
+      const res = await apiLogin({
+        email: form.email,
+        password: form.password,
+      });
+
+      if (!res?.token) {
+        localStorage.clear();
+        setFormErrors({ api: "Invalid email or password" });
+        return;
+      }
+      console.log("login res token")
+      login(res.token);
+
+      if (res.user.user_role === "artist") {
+        navigate("/dashboard");
+      } else if (res.user.user_role === "admin") {
+        navigate("/admin-dashboard");
+      }else {
+        navigate("/");
+      }
+    } catch (err) {
+      setFormErrors({ api: "Invalid email or password" });
     }
   }
 
+  useEffect(() => {
+    console.log(formErrors)
+    if (Object.keys(formErrors).length === 0 && isSubmit) {
+      console.log(form)
+    }
+  }, [formErrors])
+
+  const validate = (values) => {
+    const errors = {}
+    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+
+
+    if (!values.email) {
+      errors.email = "Email is Required"
+    } else if (!regex.test(values.email)) {
+      errors.email = "Email Format Invalid"
+    }
+
+    if (!values.password) {
+      errors.password = "Password is Required"
+    }
+    return errors;
+
+  }
 
   return (
     <div>
-      <h2>{mode === 'register' ? 'Register' : 'Login'}</h2>
-      <form onSubmit={submit} style={{ display: 'grid', gap: 8, maxWidth: 400 }}>
-        {mode === 'register' && (
-          <>
-            <input placeholder="Artist Name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
-            <input placeholder="Website (optional)" value={form.website} onChange={e => setForm({ ...form, website: e.target.value })} />
-          </>
-        )}
+      <h2>Login</h2>
+      <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 8, maxWidth: 400 }}>
         <input type="email" placeholder="Email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required />
+        {formErrors.email && (<p className="error">{formErrors.email}</p>)}
         <input type="password" placeholder="Password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} required />
-        <button type="submit">{mode === 'register' ? 'Create account' : 'Login'}</button>
+        {formErrors.password && (<p className="error">{formErrors.password}</p>)}
+        <button type="submit">Login</button>
+        {formErrors.api && (<p className="error">{formErrors.api}</p>)}
       </form>
-      <button onClick={() => setMode(mode === 'login' ? 'register' : 'login')} style={{ marginTop: 8 }}>
-        Switch to {mode === 'login' ? 'Register' : 'Login'}
-      </button>
-      {token && artist && (
-        <div style={{ marginTop: 12 }}>
-          <div>Logged in as <strong>{artist.name}</strong></div>
-          <div>Artist ID: <code>{artist.id}</code></div>
-        </div>
-      )}
     </div>
   );
 }

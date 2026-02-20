@@ -1,34 +1,54 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { apiFetch, fetchMe } from "../api";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [role, setRole] = useState(null); // "admin" | "user" | null
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Load persisted role on startup
-  useEffect(() => {
-    const savedRole = localStorage.getItem("role");
-    if (savedRole) setRole(savedRole);
-  }, []);
+  const login = async (token) => {
+    localStorage.setItem("token", token);
 
-  const login = (newRole) => {
-    setRole(newRole);
-    localStorage.setItem("role", newRole);
+    const data = await fetchMe();
+    console.log(data)
+    setUser(data);
   };
 
   const logout = () => {
-    setRole(null);
-    localStorage.removeItem("role")
+    localStorage.removeItem("token");
+    setUser(null);
   };
 
+  useEffect(() => {
+    async function restoreSession() {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const data = await fetchMe();
+        setUser(data);
+      } catch {
+        localStorage.removeItem("token");
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    restoreSession();
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ role, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
-// Easy consume hook
 export function useAuth() {
   return useContext(AuthContext);
 }

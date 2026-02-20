@@ -10,8 +10,6 @@ let base =
   import.meta.env.VITE_API_URL ||
   "https://artist-gig-widget-server.onrender.com/api";
 
-
-
 console.log("API_URL:", base);
 
 export async function apiFetch(path, options = {}) {
@@ -35,11 +33,9 @@ export async function apiFetch(path, options = {}) {
 
   if (!res.ok) {
     if (res.status === 401) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("artist");
-      localStorage.removeItem("admin");
-      window.location.href = "/login";
-    }
+  localStorage.removeItem("token");
+  throw new Error("Unauthorized");
+}
 
     const message =
       data?.error ||
@@ -62,13 +58,12 @@ export const deleteGig       = (id) => apiFetch(`/gigs/${id}`, { method: "DELETE
 export const fetchArtist     = (id) => apiFetch(`/artists/${id}`);
 export const fetchPublicGigs = () => apiFetch("/gigs/public");
 
+
+export const fetchMe         = () => apiFetch("/auth/me");
 export const register        = (artist) => apiFetch("/auth/register", { method: "POST", body: JSON.stringify(artist) });
 export const login           = (creds)  => apiFetch("/auth/login", { method: "POST", body: JSON.stringify(creds) });
-export const adminLogin      = (creds)  => apiFetch("/admin/login", { method: "POST", body: JSON.stringify(creds) });
 
 export const logout = () => {
   localStorage.removeItem("token");
-  localStorage.removeItem("artist");
-  localStorage.removeItem("admin");
   window.location.href = "/login";
 };

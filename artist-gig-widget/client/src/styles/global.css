@@ -23,6 +23,7 @@ html, body {
   margin-bottom: 16px;
   background: #000;
   padding: 12px 0;
+  justify-content: space-between;
 }
 
 /* Nav links */
@@ -31,6 +32,11 @@ html, body {
   color: #d9ae4c; /* gold */
   font-weight: 600;
   transition: color 0.2s ease;
+}
+
+.navbar div{
+  display: flex;
+  gap: 12px;
 }
 
 .navbar a:hover {
@@ -110,7 +116,7 @@ code, pre {
 .gig-card h3 {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #d9ae4c; /* Gold like in your screenshot */
+  color: #d9ae4c; 
   margin-bottom: 0.25rem;
 }
 

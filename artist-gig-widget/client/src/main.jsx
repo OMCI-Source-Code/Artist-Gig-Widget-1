@@ -13,7 +13,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <HashRouter>
                   <AuthProvider>
                         <Routes>
-                              
                               <Route path="/widget/artist" element={<ArtistWidget embedMode />} />
                               <Route path="/widget/global" element={<GlobalWidget embedMode />} />
                               <Route path="/widget/calendar" element={<CalendarWidget embedMode />} />

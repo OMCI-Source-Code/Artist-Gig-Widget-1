@@ -166,6 +166,10 @@
   background: #2f855a;
   color: #fff;
 }
+.flag.coop_event {
+  background: #d9ae4c;
+  color: #fff;
+}
 
 /* ===== Buttons ===== */
 button {

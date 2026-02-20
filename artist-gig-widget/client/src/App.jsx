@@ -1,69 +1,101 @@
-import React from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
-import { useAuth } from './context/AuthContext.jsx';
-import ArtistWidget from './components/ArtistWidget.jsx';
-import GlobalWidget from './components/GlobalWidget.jsx';
-import Login from './components/Login.jsx';
-import Dashboard from './components/Dashboard.jsx';
-import AdminLogin from './components/AdminLogin.jsx';
-import AdminDashboard from './components/AdminDashboard.jsx';
-import "./styles/global.css";
-import { Navigate } from 'react-router-dom';
+import React from "react";
+import { Routes, Route, Link, Navigate } from "react-router-dom";
+import { useAuth } from "./context/AuthContext.jsx";
 
+import ArtistWidget from "./components/ArtistWidget.jsx";
+import GlobalWidget from "./components/GlobalWidget.jsx";
+import Login from "./components/Login.jsx";
+import Register from "./components/Register.jsx";
+import Dashboard from "./components/Dashboard.jsx";
+import AdminDashboard from "./components/AdminDashboard.jsx";
+
+import "./styles/global.css";
 
 export default function App() {
-  const { role, logout } = useAuth();
+  const { user, logout } = useAuth();
+  console.log(user)
+
   return (
     <div className="container">
       <nav className="navbar">
-        <Link to="/">Home</Link>
-        <Link to="/global">Global Widget</Link>
-        <Link to="/login">Login</Link>
-        <Link to="/admin/login">Admin Login</Link>
+        <div>
+          <Link to="/global">Gigs</Link>
 
-        {/* conditional dashboard */}
-        {role === "admin" && <Link to="/admin-dashboard">Admin Dashboard</Link>}
-        {role === "user" && <Link to="/dashboard">Dashboard</Link>}
+          {user?.role === "admin" && (
+            <Link to="/admin-dashboard">Admin Dashboard</Link>
+          )}
 
-        {role && <button onClick={logout}>Logout</button>}
+          {user?.role === "artist" && (
+            <Link to="/dashboard">Dashboard</Link>
+          )}
+        </div>
+
+        <div>
+          
+          {!user ? (
+            <>
+              <Link to="/login">Login</Link>
+              <Link to="/register">Register</Link>
+            </>
+          ) : (
+            <button onClick={logout}>Logout</button>
+          )}
+          
+        </div>
       </nav>
 
       <Routes>
-        <Route index element={<Home />} />
+        {/* Root */}
+        <Route index element={<Navigate to="/login" replace />} />
 
-        <Route path="/artist/:artistId" element={<ArtistWidget />} />
+        {/* Public pages */}
         <Route path="/global" element={<GlobalWidget />} />
+        <Route path="/artist/:artistId" element={<ArtistWidget />} />
 
-        {/* login pages */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/admin/login" element={<AdminLogin />} />
+        {/* Login */}
+        <Route
+          path="/login"
+          element={
+            user?.role === "artist"
+              ? <Navigate to="/dashboard" replace />
+              : user?.role === "admin"
+              ? <Navigate to="/admin-dashboard" replace />
+              : <Login />
+          }
+        />
 
-        {/* user dashboard */}
+        {/* Artist Dashboard */}
         <Route
           path="/dashboard"
-          element={role === "user" ? <Dashboard /> : <Navigate to="/login" />}
+          element={
+            user?.role === "artist"
+              ? <Dashboard />
+              : user?.role === "admin"
+              ? <Navigate to="/admin-dashboard" replace />
+              : <Navigate to="/login" replace />
+          }
         />
+        
 
-        {/* admin dashboard */}
+        {/* Admin Dashboard */}
         <Route
           path="/admin-dashboard"
-          element={role === "admin" ? <AdminDashboard /> : <Navigate to="/admin/login" />}
+          element={
+            user?.role === "admin"
+              ? <AdminDashboard />
+              : <Navigate to="/admin/login" replace />
+          }
         />
-      </Routes>
-    </div>
-  );
-}
 
-function Home() {
-  return (
-    <div>
-      <h1>Gig Widgets</h1>
-      <p>Use the links above to view widgets or log in to the dashboard.</p>
-      {/* <h3>Embed examples</h3>
-      <code>
-        {`<div data-gig-widget data-type="artist" data-artist-id="1" data-view="list"></div>
-<script src="https://artist-gig-widget-server.vercel.app/embed.js"></script>`}
-      </code> */}
+        {/* Register */}
+        <Route
+          path="/register"
+          element={<Register />}
+        />
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
     </div>
   );
 }
