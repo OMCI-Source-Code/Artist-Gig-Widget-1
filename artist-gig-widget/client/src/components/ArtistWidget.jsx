@@ -36,6 +36,24 @@ export default function WidgetArtist() {
     load();
   }, [artistId]);
 
+  const refreshGigs = () => {
+    async function load() {
+      try {
+        if (!artistId) {
+          setGigs([]);
+          return;
+        }
+        const data = await fetchArtistGigs(artistId);
+        setGigs(data);
+      } catch (err) {
+        console.error("Failed to load gigs:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }
+
 const MAX_HEIGHT = 600;
 
 useEffect(() => {
@@ -92,8 +110,16 @@ useEffect(() => {
     return result;
   }
 
-  if (loading) return <div>Loading gigs…</div>;
-  if (!gigs.length) return <div>No gigs yet.</div>;
+  if (loading) return  (
+  <div className="gig-status-container">
+    <p className="gig-status-message">Loading gigs…</p>
+  </div>
+);
+  if (!gigs.length) return(
+    <div className="gig-status-container">
+     <p className="gigStatusMessage"> No gigs .</p>
+    </div>
+  ) ;
 
   const filtered = applyFilter(gigs);
 
@@ -119,6 +145,7 @@ useEffect(() => {
           >
             Past
           </button>
+          <button className="refresh-btn" onClick={refreshGigs}>⟳</button>
         </div>
 
         <input

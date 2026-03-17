@@ -19,7 +19,8 @@ function Inner() {
   const artist = user?.artist;
   const [gigs, setGigs] = useState([]);
   const [editing, setEditing] = useState(null);
-  const [filter, setFilter] = useState("upcoming"); 
+  const [filter, setFilter] = useState("upcoming");
+
 
   async function load() {
     try {
@@ -34,13 +35,13 @@ function Inner() {
     load();
   }, []);
 
-  
+
   const now = new Date();
   const filteredGigs = gigs.filter((g) => {
     const start = new Date(g.date_time);
     if (filter === "upcoming") return start >= now;
     if (filter === "past") return start < now;
-    return true; 
+    return true;
   });
 
   const handleCreate = async (gig) => {
@@ -72,57 +73,57 @@ function Inner() {
     }
   };
 
-const exportCSV = () => {
-  if (!filteredGigs.length) {
-    alert("No gigs to export.");
-    return;
-  }
+  const exportCSV = () => {
+    if (!filteredGigs.length) {
+      alert("No gigs to export.");
+      return;
+    }
 
-  const headers = [
-    "Title",
-    "Start Date & Time",
-    "End Time",
-    "Venue",
-    "Description",
-    "Directions",
-    "Link",
-    "Private?",
-    "3 EA CEP?",
-    "3P?",
-  ];
+    const headers = [
+      "Title",
+      "Start Date & Time",
+      "End Time",
+      "Venue",
+      "Description",
+      "Directions",
+      "Link",
+      "Private?",
+      "3 EA CEP?",
+      "3P?",
+    ];
 
-  const rows = filteredGigs.map((g) => [
-    g.title,
-    new Date(g.date_time).toISOString(),
-    g.end_time ? new Date(g.end_time).toISOString() : "",
-    g.venue || "",
-    g.description || "",
-    g.directions || "",
-    g.link || "",
-    g.private ? "Yes" : "No",
-    g.ea_public_only ? "Yes" : "No",
-    g.p_public_only ? "Yes" : "No",
-  ]);
+    const rows = filteredGigs.map((g) => [
+      g.title,
+      new Date(g.date_time).toISOString(),
+      g.end_time ? new Date(g.end_time).toISOString() : "",
+      g.venue || "",
+      g.description || "",
+      g.directions || "",
+      g.link || "",
+      g.private ? "Yes" : "No",
+      g.ea_public_only ? "Yes" : "No",
+      g.p_public_only ? "Yes" : "No",
+    ]);
 
-  const csvContent =
-    [headers, ...rows]
-      .map((row) =>
-        row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(",")
-      )
-      .join("\n");
+    const csvContent =
+      [headers, ...rows]
+        .map((row) =>
+          row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(",")
+        )
+        .join("\n");
 
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
 
-  const filename = `${artist?.artist_name || "artist"}-gigs-${filter}.csv`;
+    const filename = `${artist?.artist_name || "artist"}-gigs-${filter}.csv`;
 
-  const link = document.createElement("a");
-  link.href = url;
-  link.setAttribute("download", filename);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
 
   return (
@@ -177,8 +178,8 @@ const exportCSV = () => {
                       <span>
                         📅 {new Date(g.date_time).toLocaleString()}
                         {g.end_time
-                        // TODO: make this so that if the end date is the 
-                        // same as the start date, don't show the end date only show end time
+                          // TODO: make this so that if the end date is the 
+                          // same as the start date, don't show the end date only show end time
                           ? " - " + new Date(g.end_time).toLocaleString()
                           : ""}
                       </span>
@@ -210,18 +211,21 @@ const exportCSV = () => {
                       )}
                     </div>
                   </div>
+                  {new Date(g.end_time) > new Date() && (
+                    <div style={{ display: "flex", gap: 8 }}>
 
-                  <div style={{ display: "flex", gap: 8 }}>
-                    <button className="edit-btn" onClick={() => setEditing(g)}>
-                      Edit
-                    </button>
-                    <button
-                      className="delete-btn"
-                      onClick={() => handleDelete(g.id)}
-                    >
-                      Delete
-                    </button>
-                  </div>
+                      <button className="edit-btn" onClick={() => setEditing(g)}>
+                        Edit
+                      </button>
+                      <button
+                        className="delete-btn"
+                        onClick={() => handleDelete(g.id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
+
                 </div>
               </li>
             ))}

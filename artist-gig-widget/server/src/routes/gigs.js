@@ -1,11 +1,10 @@
-// server/src/routes/gigs.js
 import express from "express";
 import { query } from "../db.js";
 import { authMiddleware } from "../middleware/auth.js";
 
 const router = express.Router();
 
-// Get gigs for the logged-in artist
+// maybe remove this?
 router.get("/mine", authMiddleware, async (req, res) => {
   try {
     const { rows } = await query(
@@ -31,8 +30,12 @@ router.post("/", authMiddleware, async (req, res) => {
       link,
       directions,
       private: isPrivate,
-      eaPublicOnly,
-      pPublicOnly,
+      ea_public_only,
+      p_public_only,
+      share_with_coop,
+      show_in_personal,
+      share_with_external,
+      age_restriction,
       coop_event
     } = req.body;
 
@@ -44,8 +47,8 @@ router.post("/", authMiddleware, async (req, res) => {
 
     const { rows } = await query(
       `INSERT INTO gigs 
-        (created_by_user_id, title, date_time, end_time, venue, description, link, directions, private, ea_public_only, p_public_only, coop_event)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+        (created_by_user_id, title, date_time, end_time, venue, description, link, directions, private, ea_public_only, p_public_only, share_with_coop, show_in_personal, share_with_external, age_restriction,coop_event)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
        RETURNING *`,
       [
         req.user.id,
@@ -57,8 +60,12 @@ router.post("/", authMiddleware, async (req, res) => {
         link || null,
         directions || null,
         isPrivate || false,
-        eaPublicOnly || false,
-        pPublicOnly || false,
+        ea_public_only || false,
+        p_public_only || false,
+        share_with_coop || false,
+        show_in_personal || false,
+        share_with_external || false,
+        age_restriction || null,
         isCoopEvent
       ]
     );
@@ -101,8 +108,12 @@ router.put("/:id", authMiddleware, async (req, res) => {
       link,
       directions,
       private: isPrivate,
-      eaPublicOnly,
-      pPublicOnly,
+      ea_public_only,
+      p_public_only,
+      share_with_coop,
+      show_in_personal,
+      share_with_external,
+      age_restriction,
       coop_event,
       approved,
     } = req.body;
@@ -125,9 +136,13 @@ router.put("/:id", authMiddleware, async (req, res) => {
            private=$8,
            ea_public_only=$9,
            p_public_only=$10,
-           coop_event=$11,
-           approved=$12
-       WHERE id=$13
+           share_with_coop=$11,
+           show_in_personal=$12,
+           share_with_external=$13,
+           age_restriction=$14,
+           coop_event=$15,
+           approved=$16
+       WHERE id=$17
        RETURNING *`,
       [
         title,
@@ -138,8 +153,12 @@ router.put("/:id", authMiddleware, async (req, res) => {
         link || null,
         directions || null,
         isPrivate || false,
-        eaPublicOnly || false,
-        pPublicOnly || false,
+        ea_public_only || false,
+        p_public_only || false,
+        share_with_coop || false,
+        show_in_personal || false,
+        share_with_external || false,
+        age_restriction || null,
         updatedCoop,
         updatedApproved,
         id,
@@ -190,10 +209,15 @@ router.get("/public", async (req, res) => {
   try {
     const { rows } = await query(
       `SELECT gigs.*, artists.artist_name
-       FROM gigs
-       JOIN artists ON artists.user_id = gigs.created_by_user_id
-       WHERE gigs.private = false
-       ORDER BY date_time ASC`
+        FROM gigs
+        JOIN artists ON artists.user_id = gigs.created_by_user_id
+        WHERE gigs.private = false 
+          AND gigs.approved = true 
+          AND (
+            gigs.share_with_coop = true
+            OR gigs.share_with_external = true
+          )
+      ORDER BY date_time ASC;`
     );
     res.json(rows);
   } catch (err) {
@@ -217,11 +241,11 @@ router.get("/all", async (req, res) => {
   }
 });
 
-router.get("/users/:id", async (req, res) => {
+router.get("/user/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { rows } = await query(
-      "SELECT * FROM gigs WHERE created_by_user_id = $1 AND private = false ORDER BY date_time ASC",
+      "SELECT * FROM gigs WHERE created_by_user_id = $1 ORDER BY date_time ASC",
       [id]
     );
     res.json(rows);

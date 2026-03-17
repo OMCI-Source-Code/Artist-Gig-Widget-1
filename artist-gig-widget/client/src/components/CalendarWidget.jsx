@@ -85,19 +85,34 @@ export default function CalendarWidget() {
     setSelectedDate(null);
   };
 
+  const refreshGigs = () => {
+    async function load() {
+      try {
+        const data = await fetchGigs();
+        const approved = data.filter((g) => g.approved === true);
+        setGigs(approved);
+        console.log("refreshed")
+      } catch (err) {
+        console.error("Calendar fetch err:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }
+
   return (
     <div className="calendar-widget">
-
       <div className="header">
         <h1>Upcoming Events</h1>
+        <button className="refresh-btn" onClick={refreshGigs}>⟳</button>
       </div>
-
+      
       <div className="cal-header">
         <button onClick={prevMonth}>←</button>
         <h2>
           {current.toLocaleString("default", { month: "long" })} {year}
         </h2>
-
         <button onClick={nextMonth}>→</button>
       </div>
       <div className="day-name-container">
@@ -118,7 +133,7 @@ export default function CalendarWidget() {
           </p>
           <p>{currentGig.description}</p>
           <p>{currentGig.artist_id}</p>
-          {currentGig.link ? <Link to={currentGig.link}><button >Event Details</button></Link> : <></>}
+          {currentGig.link ? <Link to={currentGig.link} target="_blank"><button >Event Details</button></Link> : <></>}
         </div>
       </Modal>}
       {currentModal === "dayView" && selectedDate && (

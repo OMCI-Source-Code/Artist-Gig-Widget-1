@@ -1,4 +1,3 @@
-// src/routes/auth.js
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import { createArtist, findUserByEmail, signToken } from '../userAuth.js';

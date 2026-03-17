@@ -72,6 +72,7 @@ function Inner() {
   const toggleApprove = async (gig) => {
     try {
       console.log(gig.id, gig.approved);
+      console.log(gig)
       await apiFetch(`/gigs/${gig.id}`, {
         method: "PUT",
         body: JSON.stringify({ 
@@ -131,7 +132,7 @@ function Inner() {
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
 
-    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+    const today = new Date().toISOString().split("T")[0];
     const filename = `all-gigs-${today}.csv`;
 
     const link = document.createElement("a");
@@ -219,10 +220,10 @@ function Inner() {
 
                     <div className="gig-flags">
                       {g.ea_public_only && (
-                        <span className="flag ea">3 EA CEP</span>
+                        <span className="flag ea">EA CEP</span>
                       )}
                       {g.p_public_only && (
-                        <span className="flag p">3P</span>
+                        <span className="flag p">3P CEP</span>
                       )}
                       {g.coop_event && (
                         <span className="flag coop_event">Co-op Event</span>
@@ -263,7 +264,7 @@ function Inner() {
 
       <hr style={{ margin: "24px 0" }} />
       <h3>Tools</h3>
-      <button onClick={exportCSV}>⬇️ Export My Gigs (CSV)</button>
+      <button onClick={exportCSV}>⬇️ Export Gigs (CSV)</button>
 
       <hr style={{ margin: "24px 0" }} />
     </div>

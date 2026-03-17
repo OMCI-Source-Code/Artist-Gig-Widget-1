@@ -2,8 +2,23 @@
 .gig-widget {
   font-family: system-ui, -apple-system, sans-serif;
   padding: 1rem;
-  max-height: 600px;    /* Scrollable like screenshot */  
+  max-height: 600px;    
   overflow-y: auto;  
+}
+
+.gig-status-container{
+  display: flex;
+  max-height: 600px;  
+  flex-direction: column;
+  align-items: center;
+  background-color: white;
+
+}
+
+.gig-status-message{
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #fbfbfb;
 }
 
 .gig-list {

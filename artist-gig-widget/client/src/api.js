@@ -51,7 +51,7 @@ export async function apiFetch(path, options = {}) {
 export const fetchAllGigs    = () => apiFetch("/gigs");
 export const fetchGigs       = () => apiFetch("/gigs/all");
 export const fetchMyGigs     = () => apiFetch("/gigs/mine");
-export const fetchArtistGigs = (id) => apiFetch(`/artists/${id}/gigs`);
+export const fetchArtistGigs = (id) => apiFetch(`/users/gigs/${id}`);
 export const createGig       = (gig) => apiFetch("/gigs", { method: "POST", body: JSON.stringify(gig) });
 export const updateGig       = (id, updates) => apiFetch(`/gigs/${id}`, { method: "PUT", body: JSON.stringify(updates) });
 export const deleteGig       = (id) => apiFetch(`/gigs/${id}`, { method: "DELETE" });

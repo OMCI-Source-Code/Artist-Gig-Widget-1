@@ -47,7 +47,7 @@
           console.error("Artist widget requires data-artist-id");
           return;
         }
-        apiUrl = `${apiOrigin}/artists/${encodeURIComponent(artistId)}/gigs`;
+        apiUrl = `${apiOrigin}/gigs/user/${encodeURIComponent(artistId)}`;
       } else {
         apiUrl = `${apiOrigin}/gigs/public`;
       }
@@ -71,7 +71,7 @@
           button.style.width = "56px";
           button.style.height = "56px";
           button.style.borderRadius = "50%";
-          button.style.background = key === "public" ? "#007bff" : "white";
+          button.style.background = key === "public" ? "#000000ff" : "white";
           button.style.color = "#fff";
           button.style.display = "flex";
           button.style.alignItems = "center";
