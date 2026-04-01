@@ -32,8 +32,19 @@
 
 /* Checkbox labels */
 .gig-form label.checkbox {
+  display: flex;
   flex-direction: row;
-  align-items: right;
+  align-items: center;   /* vertically aligned */
+  justify-content: flex-start;
+  gap: 0.5rem;
+  font-weight: normal;
+  color: #fff;
+  width: 100%; /* optional for consistent layout */
+}
+.checkboxContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
   justify-content: flex-start;
   gap: 0.5rem;
   font-weight: normal;
@@ -55,6 +66,10 @@
   color: #fff;
   box-sizing: border-box;
   transition: border 0.2s, box-shadow 0.3s ease, transform 0.2s;
+}
+.gig-form input[type="checkbox"] {
+  width: auto;
+  height: auto;
 }
 
 /* Inputs focus glow */

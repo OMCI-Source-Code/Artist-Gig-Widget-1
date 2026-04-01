@@ -24,8 +24,6 @@ export default function GigForm({ initial = {}, onSave, onCancel }) {
   };
 
   const [form, setForm] = useState(emptyForm);
-  const [IsPrivate, setIsPrivate] = useState(null)
-  const [IsPublic, setIsPublic] = useState(null)
 
   useEffect(() => {
     if (initial && Object.keys(initial).length > 0) {
@@ -77,35 +75,13 @@ export default function GigForm({ initial = {}, onSave, onCancel }) {
     }
   }
 
-  const checkBoxVisibility = () => {
-    //this is for switching between public and private gigs
-    //if private is checked off then isPublic is set to false and isPrivate is set to true (disabling the rest of the fields)
-    //if coop_event, share_with_coop, show_in_personal, or share_with_external is checked then isPublic is set to true and isDisabled is set to true(enabling the rest of the fields)
-    //should be able to swap between public and private
-    //both state variables will be null at first
-    if(form.private && form.share_with_coop || 
-      form.show_in_personal || 
-      form.share_with_external ||
-      form.coop_event){
-        setIsPrivate(null)
-        setIsPublic(null)
-      }
+  const isPrivateSelected = form.private;
 
-    if (form.private) {
-      setIsPrivate(false)
-      setIsPublic(true)
-    } else if (form.share_with_coop || 
-      form.show_in_personal || 
-      form.share_with_external ||
-      form.coop_event
-    ) {
-      setIsPublic(false)
-      setIsPrivate(true)
-    }else {
-      setIsPrivate(null)
-      setIsPublic(null)
-    }
-  }
+const isAnyPublicSelected =
+  form.share_with_coop ||
+  form.show_in_personal ||
+  form.share_with_external ||
+  form.coop_event;
 
 return (
   <form className="gig-form" onSubmit={submit}>
@@ -186,7 +162,9 @@ return (
       />
     </label>
 
-  <div className="checkboxCon">
+
+
+  <div className="checkboxContainer">
     <label>
       Display Options
     </label>
@@ -198,8 +176,8 @@ return (
           checked={form.coop_event}
           onChange={(e) =>{
             update("coop_event", e.target.checked)
-            checkBoxVisibility()
           }}
+          disabled={isPrivateSelected}
         />
         Coop Event
       </label>
@@ -210,9 +188,8 @@ return (
         type="checkbox"
         checked={form.private}
         onChange={(e) => {
-          update("private", e.target.checked)
-          checkBoxVisibility()}}
-          disabled={IsPublic}
+          update("private", e.target.checked)}}
+          disabled={isAnyPublicSelected}
       />
       PRIVATE (Do not display)
     </label>
@@ -222,10 +199,8 @@ return (
         type="checkbox"
         checked={form.show_in_personal}
         onChange={(e) => {
-          update("show_in_personal", e.target.checked)
-          checkBoxVisibility()
-        }}
-        disabled={IsPrivate} />
+          update("show_in_personal", e.target.checked)}}
+        disabled={isPrivateSelected} />
       MY ARTIST CALENDAR
     </label>
 
@@ -235,9 +210,8 @@ return (
         checked={form.share_with_coop}
         onChange={(e) => {
           update("share_with_coop", e.target.checked)
-          checkBoxVisibility()
         }}
-        disabled={IsPrivate}
+        disabled={isPrivateSelected}
          />
       CO-OP CALENDAR
     </label>
@@ -248,9 +222,8 @@ return (
         checked={form.share_with_external}
         onChange={(e) => {
           update("share_with_external", e.target.checked)
-          checkBoxVisibility()
         }} 
-        disabled={IsPrivate}/>
+        disabled={isPrivateSelected}/>
     EXTERNAL/SYNDICATED CALENDARS
     </label>
 
@@ -264,7 +237,6 @@ return (
         checked={form.ea_public_only}
         onChange={(e) => {
           update("ea_public_only", e.target.checked)
-          checkBoxVisibility()
         }} 
         />
       Emerging Artist CEP
@@ -276,7 +248,6 @@ return (
         checked={form.p_public_only}
         onChange={(e) => {
           update("p_public_only", e.target.checked)
-          checkBoxVisibility()
         }} />
      Pre-Professional CEP 
     </label>
