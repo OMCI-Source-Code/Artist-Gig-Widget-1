@@ -5,6 +5,7 @@ import GigForm from "./GigForm.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 import "../styles/dashboard.css";
 const WIDGET_ORIGIN = import.meta.env.VITE_WIDGET_ORIGIN;
+import copy from "../../dist/copy.png"
 
 export default function Dashboard() {
   return (
@@ -19,7 +20,10 @@ function Inner() {
   const artist = user?.artist;
   const [gigs, setGigs] = useState([]);
   const [editing, setEditing] = useState(null);
+  const [copying, setCopying] = useState(null);
+  const [showCopiedToast, setShowCopiedToast] = useState(false);
   const [filter, setFilter] = useState("upcoming");
+
 
 
   async function load() {
@@ -43,6 +47,20 @@ function Inner() {
     if (filter === "past") return start < now;
     return true;
   });
+
+  const handleCopy = (gig) => {
+    const { id, approved, ...rest } = gig;
+
+    setEditing(null);
+    setCopying(rest);
+
+    setShowCopiedToast(true);
+
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      setShowCopiedToast(false);
+    }, 2000);
+  };
 
   const handleCreate = async (gig) => {
     const newGig = await apiFetch("/gigs", {
@@ -129,7 +147,7 @@ function Inner() {
   return (
     <div className="dashboard">
       <h2>Dashboard</h2>
-      <p className="artist-info">
+      <p className="user-info">
         <strong>{artist?.artist_name}</strong>
       </p>
 
@@ -137,10 +155,15 @@ function Inner() {
         <div className="card">
           <h3>{editing ? "Edit Gig" : "Create Gig"}</h3>
           <GigForm
-            initial={editing || {}}
-            onSave={(body) =>
-              editing ? handleUpdate(editing.id, body) : handleCreate(body)
-            }
+            initial={editing || copying || {}}
+            onSave={(body) => {
+              if (editing) {
+                return handleUpdate(editing.id, body);
+              } else {
+                setCopying(null);
+                return handleCreate(body);
+              }
+            }}
             onCancel={() => setEditing(null)}
           />
         </div>
@@ -169,66 +192,89 @@ function Inner() {
 
           {/* ✅ scrollable gigs list */}
           <ul className="gigs-list scrollable">
-            {filteredGigs.map((g) => (
-              <li key={g.id} className="gig-item">
-                <div className="gig-header">
-                  <div>
-                    <div className="gig-title">{g.title}</div>
-                    <div className="gig-meta">
-                      <span>
-                        📅 {new Date(g.date_time).toLocaleString()}
-                        {g.end_time
-                          // TODO: make this so that if the end date is the 
-                          // same as the start date, don't show the end date only show end time
-                          ? " - " + new Date(g.end_time).toLocaleString()
-                          : ""}
-                      </span>
-                      <span>📍 {g.venue}</span>
-                      <span>{g.private ? "🔒 Private" : "🌐 Public"}</span>
-                    </div>
+            {filteredGigs.length === 0 ? (
+              <div className="empty-state">
+                No {filter} gigs found.
+              </div>
+            ) : (
+              filteredGigs.map((g) => {
+                const isFuture = new Date(g.end_time || g.date_time) > new Date();
 
-                    {g.description && (
-                      <div className="gig-description">📝 {g.description}</div>
-                    )}
-                    {g.link && (
+                return (
+                  <li key={g.id}
+                    className={`gig-item ${new Date(g.date_time) < new Date() ? "past" : ""
+                      }`}>
+                    <div className="gig-header">
                       <div>
-                        🔗{" "}
-                        <a href={g.link} target="_blank" rel="noreferrer">
-                          {g.link}
-                        </a>
+                        <div className="gig-title truncate">{g.title}</div>
+                        <div className="gig-meta">
+                          <span>
+                            📅 {new Date(g.date_time).toLocaleString()}
+                            {g.end_time
+                              // TODO: make this so that if the end date is the 
+                              // same as the start date, don't show the end date only show end time
+                              ? " - " + new Date(g.end_time).toLocaleString()
+                              : ""}
+                          </span>
+                          <span className="truncate">📍 {g.venue}</span>
+                          <span>{g.private ? "🔒 Private" : "🌐 Public"}</span>
+                        </div>
+
+                        {g.description && (
+                          <div className="gig-description truncate-multiline">📝 {g.description}</div>
+                        )}
+                        {g.link && (
+                          <div className="gig-link">
+                            🔗{" "}
+                            <a href={g.link} target="_blank" rel="noreferrer">
+                              Event link
+                            </a>
+                          </div>
+                        )}
+                        {g.directions && (
+                          <div className="gig-directions">🧭 {g.directions}</div>
+                        )}
+
+                        <div className="gig-flags">
+                          {g.ea_public_only && (
+                            <span className="flag ea">3 EA CEP</span>
+                          )}
+                          {g.p_public_only && (
+                            <span className="flag p">3P</span>
+                          )}
+                        </div>
                       </div>
-                    )}
-                    {g.directions && (
-                      <div className="gig-directions">🧭 {g.directions}</div>
-                    )}
+                      <div style={{ display: "flex", gap: 8 }}>
+                        {/* ✅ ALWAYS SHOW COPY */}
+                        <img
+                          src={copy}
+                          width={24}
+                          height={24}
+                          style={{ cursor: "pointer", alignSelf: "center" }}
+                          onClick={() => handleCopy(g)}
+                        />
 
-                    <div className="gig-flags">
-                      {g.ea_public_only && (
-                        <span className="flag ea">3 EA CEP</span>
-                      )}
-                      {g.p_public_only && (
-                        <span className="flag p">3P</span>
-                      )}
+
+                        {isFuture && (
+                          <>
+                            <button className="edit-btn" onClick={() => setEditing(g)}>
+                              Edit
+                            </button>
+                            <button
+                              className="delete-btn"
+                              onClick={() => handleDelete(g.id)}
+                            >
+                              Delete
+                            </button>
+                          </>
+                        )}
+                      </div>
+
                     </div>
-                  </div>
-                  {new Date(g.end_time) > new Date() && (
-                    <div style={{ display: "flex", gap: 8 }}>
-
-                      <button className="edit-btn" onClick={() => setEditing(g)}>
-                        Edit
-                      </button>
-                      <button
-                        className="delete-btn"
-                        onClick={() => handleDelete(g.id)}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  )}
-
-                </div>
-              </li>
-            ))}
+                  </li>
+                );
+              })
+            )}
           </ul>
         </div>
       </div>
@@ -241,6 +287,11 @@ function Inner() {
       <h3>Embed Snippets</h3>
       <pre>{`<div data-gig-widget data-type="artist" data-artist-id="${artist?.id}" data-view="list"></div>
 <script src="${WIDGET_ORIGIN}/embed.js"></script>`}</pre>
+      {showCopiedToast && (
+        <div className="toast">
+          Copied!
+        </div>
+      )}
     </div>
   );
 }

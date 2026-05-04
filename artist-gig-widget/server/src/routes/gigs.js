@@ -48,7 +48,7 @@ router.post("/", authMiddleware, async (req, res) => {
     const { rows } = await query(
       `INSERT INTO gigs 
         (created_by_user_id, title, date_time, end_time, venue, description, link, directions, private, ea_public_only, p_public_only, share_with_coop, show_in_personal, share_with_external, age_restriction,coop_event)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
        RETURNING *`,
       [
         req.user.id,

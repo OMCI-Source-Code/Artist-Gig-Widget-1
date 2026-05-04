@@ -41,6 +41,7 @@
   color: #fff;
   width: 100%; /* optional for consistent layout */
 }
+
 .checkboxContainer {
   display: flex;
   flex-direction: column;

@@ -4,6 +4,7 @@ import Protected from "./ProtectedRoute.jsx";
 import GigForm from "./GigForm.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 import "../styles/dashboard.css";
+import copy from "../../dist/copy.png"
 
 export default function AdminDashboard() {
   return (
@@ -16,6 +17,8 @@ export default function AdminDashboard() {
 function Inner() {
   const [gigs, setGigs] = useState([]);
   const [editing, setEditing] = useState(null);
+  const [copying, setCopying] = useState(null);
+  const [showCopiedToast, setShowCopiedToast] = useState(false);
   const [filter, setFilter] = useState("upcoming");
   const { user } = useAuth();
   const admin = user?.admin;
@@ -41,6 +44,22 @@ function Inner() {
     return true; // all
   });
 
+  let toastTimer;
+
+  const handleCopy = (gig) => {
+    const { id, approved, ...rest } = gig;
+
+    setEditing(null);
+    setCopying(rest);
+
+    setShowCopiedToast(true);
+
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      setShowCopiedToast(false);
+    }, 2000);
+  };
+
   const handleCreate = async (gig) => {
     const newGig = await apiFetch("/gigs", {
       method: "POST",
@@ -60,25 +79,25 @@ function Inner() {
 
   const handleDelete = async (id) => {
     if (!confirm("Delete gig?")) return;
-    try{
+    try {
       await apiFetch(`/gigs/${id}`, { method: "DELETE" });
       await load();
-    } catch (e){
+    } catch (e) {
       alert("Falied to delete event");
       return;
     }
   };
-  
+
   const toggleApprove = async (gig) => {
     try {
       console.log(gig.id, gig.approved);
       console.log(gig)
       await apiFetch(`/gigs/${gig.id}`, {
         method: "PUT",
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           ...gig,
           approved: !gig.approved
-         }),
+        }),
       });
 
       await load();
@@ -147,7 +166,7 @@ function Inner() {
   return (
     <div className="dashboard">
       <h2>Admin Dashboard</h2>
-      <p className="artist-info">
+      <p className="user-info">
         {<strong>{user?.name}</strong>}
       </p>
 
@@ -155,10 +174,15 @@ function Inner() {
         <div className="card">
           <h3>{editing ? "Edit Event" : "Create Event"}</h3>
           <GigForm
-            initial={editing || {}}
-            onSave={(body) =>
-              editing ? handleUpdate(editing.id, body) : handleCreate(body)
-            }
+            initial={editing || copying || {}}
+            onSave={(body) => {
+              if (editing) {
+                return handleUpdate(editing.id, body);
+              } else {
+                setCopying(null);
+                return handleCreate(body);
+              }
+            }}
             onCancel={() => setEditing(null)}
           />
         </div>
@@ -187,11 +211,20 @@ function Inner() {
 
           {/* ✅ scrollable gigs list */}
           <ul className="gigs-list scrollable">
-            {filteredGigs.map((g) => (
+            {filteredGigs.length === 0 ? (
+    <div className="empty-state">
+      No {filter} gigs found.
+    </div>
+  ) : (
+    filteredGigs.map((g) => {
+      
+      return (
               <li key={g.id} className="gig-item">
                 <div className="gig-header">
                   <div>
-                    <div className="gig-title">{g.title}</div>
+                    <div className="gig-title truncate">
+                      {g.title}
+                    </div>
                     <div className="gig-meta">
                       <span>
                         📅 {new Date(g.date_time).toLocaleString()}
@@ -199,18 +232,25 @@ function Inner() {
                           ? " - " + new Date(g.end_time).toLocaleTimeString()
                           : ""}
                       </span>
-                      <span>📍 {g.venue}</span>
+                      <span className="truncate">📍 {g.venue}</span>
                       <span>{g.private ? "🔒 Private" : "🌐 Public"}</span>
                     </div>
+                    {g.age_restriction && (
+                      <div className="gig-age">
+                        🎟️ {g.age_restriction}
+                      </div>
+                    )}
 
                     {g.description && (
-                      <div className="gig-description">📝 {g.description}</div>
+                      <div className="gig-description truncate-multiline">
+                        📝 {g.description}
+                      </div>
                     )}
                     {g.link && (
-                      <div>
+                      <div className="gig-link">
                         🔗{" "}
                         <a href={g.link} target="_blank" rel="noreferrer">
-                          {g.link}
+                          Event link
                         </a>
                       </div>
                     )}
@@ -232,6 +272,13 @@ function Inner() {
                   </div>
 
                   <div style={{ display: "flex", gap: 8 }}>
+                    <img
+                      src={copy}
+                      width={24}
+                      height={24}
+                      style={{ cursor: "pointer", alignSelf: "center" }}
+                      onClick={() => handleCopy(g)}
+                    />
                     <button className="edit-btn" onClick={() => setEditing(g)}>
                       Edit
                     </button>
@@ -257,7 +304,9 @@ function Inner() {
 
                 </div>
               </li>
-            ))}
+             );
+    })
+  )}
           </ul>
         </div>
       </div>
@@ -267,6 +316,11 @@ function Inner() {
       <button onClick={exportCSV}>⬇️ Export Gigs (CSV)</button>
 
       <hr style={{ margin: "24px 0" }} />
+      {showCopiedToast && (
+        <div className="toast">
+          Copied!
+        </div>
+      )}
     </div>
   );
 }
