@@ -27,7 +27,8 @@
       const apiOrigin =
         el.getAttribute("data-api") ||
         script?.getAttribute("data-api") ||
-        "https://artist-gig-widget-server.onrender.com/api";
+        // "https://artist-gig-widget-server.onrender.com/api";
+        "http://localhost:4000/api";
 
 
 
@@ -99,8 +100,8 @@
             const badge = document.createElement("div");
             badge.innerText = count;
             badge.style.position = "absolute";
-            badge.style.top = "-6px";       // pull it outside button
-            badge.style.right = "-6px";     // pull it outside button
+            badge.style.top = "-6px";       
+            badge.style.right = "-6px";     
             badge.style.background = "#ff4757";
             badge.style.color = "#fff";
             badge.style.fontSize = "12px";

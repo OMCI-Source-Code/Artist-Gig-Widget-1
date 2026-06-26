@@ -120,42 +120,115 @@ export default function CalendarWidget() {
           <p key={d} className="day-name">{d}</p>
         ))}
       </div>
-      {currentModal === "gig" && <Modal closeModal={closeModal}>
-        <div>
-          <h1>{currentGig.title}</h1>
-          <p>{currentGig.venue}</p>
-          <p>
+      {currentModal === "gig" && (
+  <Modal closeModal={closeModal}>
+    <div className="gig-modal">
+      <div className="gig-modal-header">
+        <h1>{currentGig.title}</h1>
+
+        <div className="gig-modal-meta">
+          <span>📍 {currentGig.venue}</span>
+
+          <span>
+            📅{" "}
             {new Date(currentGig.date_time).toLocaleDateString(undefined, {
               year: "numeric",
               month: "long",
               day: "numeric",
             })}
-          </p>
-          <p>{currentGig.description}</p>
-          <p>{currentGig.artist_id}</p>
-          {currentGig.link ? <Link to={currentGig.link} target="_blank"><button >Event Details</button></Link> : <></>}
-        </div>
-      </Modal>}
-      {currentModal === "dayView" && selectedDate && (
-        <Modal closeModal={closeModal}>
-          <div>
-            <h2>{selectedDate.toDateString()}</h2>
+          </span>
 
-            {gigsForSelectedDate.map((gig) => (
-              <div
-                key={gig.id}
-                className="gigDayView"
-                onClick={() => {
-                  setCurrentGig(gig);
-                  setCurrentModal("gig");
-                }}
-              >
-                {gig.title}
-              </div>
-            ))}
-          </div>
-        </Modal>
+          {currentGig.created_by_user_id && (
+            <span>
+              🎤 {currentGig.created_by_user_id}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {currentGig.description && (
+        <p className="gig-modal-description">
+          {currentGig.description}
+        </p>
       )}
+
+      {/* ===== Event Tags ===== */}
+      <div className="gig-modal-tags">
+
+        {currentGig.age_restriction && (
+          <div className="gig-modal-tag age">
+            🎟️ {currentGig.age_restriction}
+          </div>
+        )}
+
+        {currentGig.ea_public_only && (
+          <div className="gig-modal-tag ea">
+            Emerging Artist CEP
+          </div>
+        )}
+
+        {currentGig.p_public_only && (
+          <div className="gig-modal-tag pp">
+            Pre-Professional CEP
+          </div>
+        )}
+
+        {currentGig.coop_event && (
+          <div className="gig-modal-tag coop">
+            Co-op Event
+          </div>
+        )}
+
+      </div>
+
+      {currentGig.link && (
+        <a
+          href={currentGig.link}
+          target="_blank"
+          rel="noreferrer"
+          className="gig-modal-link"
+        >
+          Event Details
+        </a>
+      )}
+    </div>
+  </Modal>
+)}
+      {currentModal === "dayView" && selectedDate && (
+  <Modal closeModal={closeModal}>
+    <div className="day-modal">
+      <h2 className="day-modal-title">
+        {selectedDate.toLocaleDateString(undefined, {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        })}
+      </h2>
+
+      <div className="day-modal-list">
+        {gigsForSelectedDate.map((gig) => (
+          <div
+            key={gig.id}
+            className="gigDayView"
+            onClick={() => {
+              setCurrentGig(gig);
+              setCurrentModal("gig");
+            }}
+          >
+            <div className="gigDayView-title">
+              {gig.title}
+            </div>
+
+            <div className="gigDayView-meta">
+              📍 {gig.venue}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </Modal>
+)}
 
       <div className="cal-grid">
         {cells.map((day, idx) => {
