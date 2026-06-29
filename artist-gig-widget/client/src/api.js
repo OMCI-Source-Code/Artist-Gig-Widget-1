@@ -28,7 +28,7 @@ export async function apiFetch(path, options = {}) {
   try {
     data = await res.json();
   } catch {
-    data = null; // No JSON body
+    data = null; 
   }
 
   if (!res.ok) {

@@ -6,7 +6,7 @@ import "../styles/globalWidget.css";
 export default function WidgetGlobal() {
   const [gigs, setGigs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("upcoming"); // ✅ default upcoming
+  const [filter, setFilter] = useState("upcoming"); 
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("soonest");
   const [startDate, setStartDate] = useState("");
@@ -33,39 +33,30 @@ useEffect(() => {
   function sendHeight() {
     const widget = document.querySelector(".gig-widget");
     if (widget) {
-      // Take the visible height or scrollHeight, whichever is smaller
       const height = Math.min(widget.scrollHeight, MAX_HEIGHT);
       window.parent.postMessage({ type: "resizeWidget", height }, "*");
     }
   }
 
-  // Send height initially and whenever dependencies change
   sendHeight();
 
-  // Also update on window resize
   window.addEventListener("resize", sendHeight);
   return () => window.removeEventListener("resize", sendHeight);
 }, [gigs, filter, search, sort, startDate]);
 
 
-  // --- filtering ---
  function applyFilter(gigs) {
   const now = new Date();
   let result = [...gigs];
 
-  // ✅ Only show gigs where at least one "public only" flag is set
-  // result = result.filter(
-  //   (g) => g.ea_public_only || g.p_public_only
-  // );
 
-  // upcoming/past/all
+
   if (filter === "upcoming") {
     result = result.filter((g) => new Date(g.date_time) >= now);
   } else if (filter === "past") {
     result = result.filter((g) => new Date(g.date_time) < now);
   }
 
-  // search
   if (search.trim()) {
     const q = search.toLowerCase();
     result = result.filter(
@@ -78,13 +69,11 @@ useEffect(() => {
     );
   }
 
-  // start date filter
   if (startDate) {
     const chosen = new Date(startDate);
     result = result.filter((g) => new Date(g.date_time) >= chosen);
   }
 
-  // sort
   if (sort === "soonest") {
     result.sort((a, b) => new Date(a.date_time) - new Date(b.date_time));
   } else if (sort === "latest") {
@@ -102,7 +91,6 @@ useEffect(() => {
 
   return (
     <div className="gig-widget">
-      {/* Controls */}
       <div className="gig-controls">
         <div className="gig-filters">
           <button
