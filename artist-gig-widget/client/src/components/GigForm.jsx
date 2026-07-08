@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 
 export default function GigForm({ initial = {}, onSave, onCancel }) {
   const { user } = useAuth();
+  const [errors, setErrors] = useState({});
   const emptyForm = {
     title: "",
     date_time: "",
@@ -55,11 +56,20 @@ export default function GigForm({ initial = {}, onSave, onCancel }) {
   }
 
   function resetForm() {
-    setForm(emptyForm);
-  }
+  setForm({...emptyForm});
+}
+
 
   async function submit(e) {
     e.preventDefault();
+
+    const validationErrors = validateForm();
+
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) {
+      return;
+    }
     const body = {
       ...form,
       date_time: new Date(form.date_time).toISOString(),
@@ -73,6 +83,27 @@ export default function GigForm({ initial = {}, onSave, onCancel }) {
     } catch (err) {
       console.error("Save failed:", err);
     }
+  }
+
+  function validateForm() {
+    const errors = {};
+
+    const selectedDate = new Date(form.date_time);
+    const now = new Date();
+
+    if (selectedDate <= now) {
+      errors.date_time = "Gig date and time must be in the future";
+    }
+
+    if (form.end_time) {
+      const endDate = new Date(form.end_time);
+
+      if (endDate <= selectedDate) {
+        errors.end_time = "End time must be after start time";
+      }
+    }
+
+    return errors;
   }
 
   const isPrivateSelected = form.private;
@@ -100,9 +131,13 @@ export default function GigForm({ initial = {}, onSave, onCancel }) {
         <input
           type="datetime-local"
           value={form.date_time}
+          min={new Date().toISOString().slice(0, 16)}
           onChange={(e) => update("date_time", e.target.value)}
           required
         />
+        {errors.date_time && (
+  <p className="error">{errors.date_time}</p>
+)}
       </label>
 
       <label>
@@ -112,6 +147,9 @@ export default function GigForm({ initial = {}, onSave, onCancel }) {
           value={form.end_time}
           onChange={(e) => update("end_time", e.target.value)}
         />
+        {errors.end_time && (
+  <p className="error">{errors.end_time}</p>
+)}
       </label>
 
       <label>

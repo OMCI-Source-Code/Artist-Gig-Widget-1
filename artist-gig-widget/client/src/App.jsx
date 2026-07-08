@@ -18,31 +18,39 @@ export default function App() {
   return (
     <div className="container">
       <nav className="navbar">
-        <div>
-          <Link to="/global">Gigs</Link>
 
-          {user?.role === "admin" && (
-            <Link to="/admin-dashboard">Admin Dashboard</Link>
-          )}
+    <div className="nav-left">
 
-          {user?.role === "artist" && (
+        <div className="logo">GigBoard</div>
+
+        <Link to="/global">Browse Gigs</Link>
+
+        {user?.role === "admin" && (
+            <Link to="/admin-dashboard">Admin</Link>
+        )}
+
+        {user?.role === "artist" && (
             <Link to="/dashboard">Dashboard</Link>
-          )}
-        </div>
+        )}
 
-        <div>
-          
-          {!user ? (
+    </div>
+
+    <div className="nav-right">
+
+        {!user ? (
             <>
-              <Link to="/login">Login</Link>
-              <Link to="/register">Register</Link>
+                <Link to="/login">Login</Link>
+                <Link to="/register">Register</Link>
             </>
-          ) : (
-            <button onClick={logout}>Logout</button>
-          )}
-          
-        </div>
-      </nav>
+        ) : (
+            <button onClick={logout}>
+                Logout
+            </button>
+        )}
+
+    </div>
+
+</nav>
 
       <Routes>
         {/* Root */}

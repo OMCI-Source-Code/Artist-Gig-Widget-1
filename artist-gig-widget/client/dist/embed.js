@@ -12,7 +12,7 @@
     const script =
       document.currentScript ||
       document.querySelector('script[src*="embed.js"]');
-    const origin = "https://artist-gig-widget-server.onrender.com";
+    const origin = "http://localhost:4000" //"https://artist-gig-widget-server.onrender.com";
     const scriptApi =
       script?.getAttribute("data-api") ||
       script?.dataset?.api ||
@@ -33,22 +33,22 @@
 
 
       const type = el.getAttribute("data-type") || "public"; // "public" or "artist"
-      const artistId = el.getAttribute("data-artist-id") || "";
+      const artistUId = el.getAttribute("data-user-id") || "";
       const view = el.getAttribute("data-view") || "card";
 
       // Unique button key
-      const key = type === "artist" ? `artist-${artistId}` : "public";
+      const key = type === "artist" ? `artist-${artistUId}` : "public";
       if (createdButtons[key]) return;
       createdButtons[key] = true;
 
       // API URL
       let apiUrl;
       if (type === "artist") {
-        if (!artistId) {
+        if (!artistUId) {
           console.error("Artist widget requires data-artist-id");
           return;
         }
-        apiUrl = `${apiOrigin}/gigs/user/${encodeURIComponent(artistId)}`;
+        apiUrl = `${apiOrigin}/gigs/user/${encodeURIComponent(artistUId)}`;
       } else {
         apiUrl = `${apiOrigin}/gigs/public`;
       }
@@ -179,8 +179,8 @@
             iframeSrc = `${origin}/#/widget/calendar?api=${encodeURIComponent(apiOrigin)}`;
           } else if (type === "artist") {
             // artist widget
-            iframeSrc = `${origin}/#/widget/artist?artistId=${encodeURIComponent(
-              artistId
+            iframeSrc = `${origin}/#/widget/artist?artistUId=${encodeURIComponent(
+              artistUId
             )}&view=${encodeURIComponent(view)}&api=${encodeURIComponent(apiOrigin)}`;
           } else {
             // global widget

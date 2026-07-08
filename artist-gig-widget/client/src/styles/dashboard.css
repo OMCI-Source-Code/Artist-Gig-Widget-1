@@ -103,7 +103,7 @@
   padding: 1rem 1.25rem;
   background: #1a1a1a;
   transition: background 0.2s ease, border 0.2s ease;
-  max-width: 400px;
+  max-width: 500px;
 }
 .gig-item.past {
   opacity: 0.6;
@@ -375,6 +375,10 @@ pre code {
 
   .gig-title {
     font-size: 1rem;
+  }
+
+  .approval-status{
+    
   }
 
   .gig-meta {

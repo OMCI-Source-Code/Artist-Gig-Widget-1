@@ -4,7 +4,7 @@ import Protected from "./ProtectedRoute.jsx";
 import GigForm from "./GigForm.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 import "../styles/dashboard.css";
-import copy from "../../dist/copy.png"
+import copy from "../assets/copy.png"
 
 export default function AdminDashboard() {
   return (
@@ -83,7 +83,7 @@ function Inner() {
       await apiFetch(`/gigs/${id}`, { method: "DELETE" });
       await load();
     } catch (e) {
-      alert("Falied to delete event");
+      alert("Failed to delete event");
       return;
     }
   };

@@ -9,13 +9,14 @@ export default function WidgetArtist() {
   const [loading, setLoading] = useState(true);
 
   // Filters
-  const [filter, setFilter] = useState("upcoming"); // default upcoming
+  const [filter, setFilter] = useState("upcoming"); 
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("soonest");
   const [startDate, setStartDate] = useState("");
 
   const params = new URLSearchParams(location.search);
-  const artistId = params.get("artistId");
+  const artistId = params.get("artistUId");
+  //console.log(artistId)
   const view = params.get("view") || "list";
 
   useEffect(() => {
@@ -26,6 +27,7 @@ export default function WidgetArtist() {
           return;
         }
         const data = await fetchArtistGigs(artistId);
+        console.log("Fetched gigs:", data);
         setGigs(data);
       } catch (err) {
         console.error("Failed to load gigs:", err);
@@ -117,7 +119,7 @@ useEffect(() => {
 );
   if (!gigs.length) return(
     <div className="gig-status-container">
-     <p className="gigStatusMessage"> No gigs .</p>
+     <p className="gig-status-message"> No gigs .</p>
     </div>
   ) ;
 

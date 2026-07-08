@@ -80,3 +80,99 @@
 .gig-event-action button:hover {
   background: #f0f0f0;
 }
+
+/* ==============================
+   COOP Calendar Widget Style
+   ============================== */
+
+.calendar-widget {
+  font-family: "Inter", Arial, sans-serif;
+  background: #000;
+  color: #d9ae4c;
+  padding: 16px;
+  border-radius: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Header */
+.calendar-widget .cal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.calendar-widget .cal-header h2 {
+  margin: 0;
+  color: #d9ae4c;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.calendar-widget button {
+  background: #d9ae4c;
+  color: #000;
+  border: none;
+  padding: 6px 14px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.calendar-widget button:hover {
+  opacity: 0.8;
+}
+
+/* Calendar Grid */
+.calendar-widget .cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+/* Day name headers */
+.calendar-widget .day-name {
+  text-align: center;
+  font-weight: bold;
+  color: #d9ae4c;
+  padding-bottom: 4px;
+}
+
+/* Individual day cell */
+.calendar-widget .day-cell {
+  min-height: 100px;
+  border: 1px solid #d9ae4c;
+  border-radius: 8px;
+  padding: 6px;
+  position: relative;
+  background: #111;
+  box-sizing: border-box;
+}
+
+.calendar-widget .day-number {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #d9ae4c;
+}
+
+/* Gig item */
+.calendar-widget .gig {
+  margin-top: 4px;
+  background: #d9ae4c;
+  color: #000;
+  padding: 3px 5px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Unapproved gigs hidden */
+.calendar-widget .gig.unapproved {
+  display: none;
+}

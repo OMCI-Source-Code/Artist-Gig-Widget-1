@@ -5,7 +5,7 @@ import GigForm from "./GigForm.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 import "../styles/dashboard.css";
 const WIDGET_ORIGIN = import.meta.env.VITE_WIDGET_ORIGIN;
-import copy from "../../dist/copy.png"
+import copy from "../assets/copy.png"
 
 export default function Dashboard() {
   return (
@@ -219,7 +219,11 @@ function Inner() {
                           <span className="truncate">📍 {g.venue}</span>
                           <span>{g.private ? "🔒 Private" : "🌐 Public"}</span>
                         </div>
-
+                        {g.age_restriction && (
+                      <div className="gig-age">
+                        🎟️ {g.age_restriction}
+                      </div>
+                        )}
                         {g.description && (
                           <div className="gig-description truncate-multiline">📝 {g.description}</div>
                         )}
@@ -237,15 +241,14 @@ function Inner() {
 
                         <div className="gig-flags">
                           {g.ea_public_only && (
-                            <span className="flag ea">3 EA CEP</span>
+                            <span className="flag ea">EA CEP</span>
                           )}
                           {g.p_public_only && (
-                            <span className="flag p">3P</span>
+                            <span className="flag p">3P CEP</span>
                           )}
                         </div>
                       </div>
                       <div style={{ display: "flex", gap: 8 }}>
-                        {/* ✅ ALWAYS SHOW COPY */}
                         <img
                           src={copy}
                           width={24}
@@ -268,6 +271,17 @@ function Inner() {
                             </button>
                           </>
                         )}
+                        
+                        <span 
+                          style={{
+                            marginTop: "0.5rem",
+                            fontSize: "0.9rem",
+                            color: g.approved ? "#2e7d32" : "#c62828",
+                          }}
+                        >
+                          {g.approved ? "Approved" : "Unapproved"}
+                        </span>
+                        
                       </div>
 
                     </div>

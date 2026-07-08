@@ -85,7 +85,7 @@ useEffect(() => {
 
 
   if (loading) return <div className="loading">Loading gigs…</div>;
-  if (!gigs.length) return <div className="empty">No gigs yet.</div>;
+  if (!gigs.length) return <div className="empty">No gigs et.</div>;
 
   const filtered = applyFilter(gigs);
 

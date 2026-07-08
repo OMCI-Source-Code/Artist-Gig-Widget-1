@@ -8,7 +8,7 @@ let base =
   getQueryParam("api") ||
   window.GIG_WIDGET_API ||
   import.meta.env.VITE_API_URL ||
-  "https://artist-gig-widget-server.onrender.com/api";
+  "http://localhost:4000/api" //"https://artist-gig-widget-server.onrender.com/api";
 
 console.log("API_URL:", base);
 
@@ -51,7 +51,7 @@ export async function apiFetch(path, options = {}) {
 export const fetchAllGigs    = () => apiFetch("/gigs");
 export const fetchGigs       = () => apiFetch("/gigs/all");
 export const fetchMyGigs     = () => apiFetch("/gigs/mine");
-export const fetchArtistGigs = (id) => apiFetch(`/users/gigs/${id}`);
+export const fetchArtistGigs = (id) => apiFetch(`/gigs/user/${id}`);
 export const createGig       = (gig) => apiFetch("/gigs", { method: "POST", body: JSON.stringify(gig) });
 export const updateGig       = (id, updates) => apiFetch(`/gigs/${id}`, { method: "PUT", body: JSON.stringify(updates) });
 export const deleteGig       = (id) => apiFetch(`/gigs/${id}`, { method: "DELETE" });

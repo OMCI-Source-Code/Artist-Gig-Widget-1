@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { register } from '../api.js';
 import { useAuth } from "../context/AuthContext.jsx";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import "./../styles/auth.css";
+
 export default function Register() {
       const navigate = useNavigate();
       const [form, setForm] = useState({ name: '', artist_name: '', website: '', email: '', password: '' });
@@ -59,21 +61,84 @@ export default function Register() {
 
       }
 
-      return (
-            <div>
-                  <h2>Register</h2>
-                  <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 8, maxWidth: 400 }}>
-                        <input placeholder="Name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
-                        <p>{formErrors.name}</p>
-                        <input placeholder="Artist Name" value={form.artist_name} onChange={e => setForm({ ...form, artist_name: e.target.value })} required />
-                        <p>{formErrors.artist_name}</p>
-                        <input placeholder="Website (optional)" value={form.website} onChange={e => setForm({ ...form, website: e.target.value })} />
-                        <input type="email" placeholder="Email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required />
-                        <p>{formErrors.email}</p>
-                        <input type="password" placeholder="Password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} required />
-                        <p>{formErrors.password}</p>
-                        <button type="submit">Register</button>
-                  </form>
+     return (
+    <div className="auth-page">
+
+        <div className="auth-card">
+
+            <h2>Create Account</h2>
+
+            <form className="auth-form" onSubmit={handleSubmit}>
+
+                <input
+                    placeholder="Name"
+                    value={form.name}
+                    onChange={e =>
+                        setForm({ ...form, name: e.target.value })
+                    }
+                />
+                {formErrors.name && (
+                    <p className="error">{formErrors.name}</p>
+                )}
+
+                <input
+                    placeholder="Artist Name"
+                    value={form.artist_name}
+                    onChange={e =>
+                        setForm({ ...form, artist_name: e.target.value })
+                    }
+                />
+                {formErrors.artist_name && (
+                    <p className="error">{formErrors.artist_name}</p>
+                )}
+
+                <input
+                    placeholder="Website (optional)"
+                    value={form.website}
+                    onChange={e =>
+                        setForm({ ...form, website: e.target.value })
+                    }
+                />
+
+                <input
+                    type="email"
+                    placeholder="Email"
+                    value={form.email}
+                    onChange={e =>
+                        setForm({ ...form, email: e.target.value })
+                    }
+                />
+                {formErrors.email && (
+                    <p className="error">{formErrors.email}</p>
+                )}
+
+                <input
+                    type="password"
+                    placeholder="Password"
+                    value={form.password}
+                    onChange={e =>
+                        setForm({ ...form, password: e.target.value })
+                    }
+                />
+                {formErrors.password && (
+                    <p className="error">{formErrors.password}</p>
+                )}
+
+                <button type="submit">
+                    Register
+                </button>
+
+            </form>
+
+            <div className="auth-footer">
+                Already have an account?{" "}
+                <Link to="/login">
+                    Login
+                </Link>
             </div>
-      )
+
+        </div>
+
+    </div>
+);
 }

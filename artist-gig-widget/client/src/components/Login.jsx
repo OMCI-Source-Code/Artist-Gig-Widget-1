@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { login as apiLogin } from '../api.js';
 import { useAuth } from '../context/AuthContext.jsx';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import "./../styles/auth.css";
 
 
 export default function Login() {
@@ -75,16 +76,57 @@ export default function Login() {
   }
 
   return (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 8, maxWidth: 400 }}>
-        <input type="email" placeholder="Email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required />
-        {formErrors.email && (<p className="error">{formErrors.email}</p>)}
-        <input type="password" placeholder="Password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} required />
-        {formErrors.password && (<p className="error">{formErrors.password}</p>)}
-        <button type="submit">Login</button>
-        {formErrors.api && (<p className="error">{formErrors.api}</p>)}
-      </form>
+    <div className="auth-page">
+        <div className="auth-card">
+
+            <h2>Welcome Back</h2>
+
+            <form className="auth-form" onSubmit={handleSubmit}>
+
+                <input
+                    type="email"
+                    placeholder="Email"
+                    value={form.email}
+                    onChange={e =>
+                        setForm({ ...form, email: e.target.value })
+                    }
+                />
+
+                {formErrors.email && (
+                    <p className="error">{formErrors.email}</p>
+                )}
+
+                <input
+                    type="password"
+                    placeholder="Password"
+                    value={form.password}
+                    onChange={e =>
+                        setForm({ ...form, password: e.target.value })
+                    }
+                />
+
+                {formErrors.password && (
+                    <p className="error">{formErrors.password}</p>
+                )}
+
+                {formErrors.api && (
+                    <p className="error">{formErrors.api}</p>
+                )}
+
+                <button type="submit">
+                    Login
+                </button>
+
+            </form>
+
+            <div className="auth-footer">
+                Don't have an account?{" "}
+                <Link to="/register">
+                    Register
+                </Link>
+            </div>
+
+        </div>
     </div>
-  );
+);
 }

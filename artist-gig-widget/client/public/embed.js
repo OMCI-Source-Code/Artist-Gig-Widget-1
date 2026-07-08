@@ -1,4 +1,6 @@
+//this version of embed.js is for production. what changes here is what goes live on peoples site
 (function () {
+  // Prevent double init
   if (window.__GIG_WIDGET_INIT__) return;
   window.__GIG_WIDGET_INIT__ = true;
 
@@ -10,38 +12,43 @@
     const script =
       document.currentScript ||
       document.querySelector('script[src*="embed.js"]');
-    const origin = "https://artist-gig-widget-server.onrender.com";
+    const origin = "http://localhost:4000" //"https://artist-gig-widget-server.onrender.com";
     const scriptApi =
       script?.getAttribute("data-api") ||
       script?.dataset?.api ||
       window.GIG_WIDGET_API;
 
     containers.forEach(function (el) {
+      /*const apiOrigin =
+        el.getAttribute("data-api") ||
+        scriptApi ||
+        origin.replace(/\/$/, "") + "/api";*/
 
       const apiOrigin =
         el.getAttribute("data-api") ||
         script?.getAttribute("data-api") ||
-        "https://artist-gig-widget-server.onrender.com/api";
+        // "https://artist-gig-widget-server.onrender.com/api";
+        "http://localhost:4000/api";
 
 
 
       const type = el.getAttribute("data-type") || "public"; // "public" or "artist"
-      const artistId = el.getAttribute("data-artist-id") || "";
+      const artistUId = el.getAttribute("data-user-id") || "";
       const view = el.getAttribute("data-view") || "card";
 
       // Unique button key
-      const key = type === "artist" ? `artist-${artistId}` : "public";
+      const key = type === "artist" ? `artist-${artistUId}` : "public";
       if (createdButtons[key]) return;
       createdButtons[key] = true;
 
       // API URL
       let apiUrl;
       if (type === "artist") {
-        if (!artistId) {
+        if (!artistUId) {
           console.error("Artist widget requires data-artist-id");
           return;
         }
-        apiUrl = `${apiOrigin}/artists/${encodeURIComponent(artistId)}/gigs`;
+        apiUrl = `${apiOrigin}/gigs/user/${encodeURIComponent(artistUId)}`;
       } else {
         apiUrl = `${apiOrigin}/gigs/public`;
       }
@@ -65,7 +72,7 @@
           button.style.width = "56px";
           button.style.height = "56px";
           button.style.borderRadius = "50%";
-          button.style.background = key === "public" ? "#007bff" : "#f6410fff";
+          button.style.background = key === "public" ? "#000000ff" : "white";
           button.style.color = "#fff";
           button.style.display = "flex";
           button.style.alignItems = "center";
@@ -93,8 +100,8 @@
             const badge = document.createElement("div");
             badge.innerText = count;
             badge.style.position = "absolute";
-            badge.style.top = "-6px";       // pull it outside button
-            badge.style.right = "-6px";     // pull it outside button
+            badge.style.top = "-6px";       
+            badge.style.right = "-6px";     
             badge.style.background = "#ff4757";
             badge.style.color = "#fff";
             badge.style.fontSize = "12px";
@@ -145,6 +152,7 @@
             "transform 0.3s ease, opacity 0.3s ease";
           card.style.opacity = "0";
 
+          // Close button
           const closeBtn = document.createElement("div");
           closeBtn.innerHTML = "&times;";
           closeBtn.style.position = "absolute";
@@ -171,8 +179,8 @@
             iframeSrc = `${origin}/#/widget/calendar?api=${encodeURIComponent(apiOrigin)}`;
           } else if (type === "artist") {
             // artist widget
-            iframeSrc = `${origin}/#/widget/artist?artistId=${encodeURIComponent(
-              artistId
+            iframeSrc = `${origin}/#/widget/artist?artistUId=${encodeURIComponent(
+              artistUId
             )}&view=${encodeURIComponent(view)}&api=${encodeURIComponent(apiOrigin)}`;
           } else {
             // global widget
@@ -184,7 +192,7 @@
           iframe.src = iframeSrc;
 
           iframe.style.width = "100%";
-          iframe.style.height = "auto"; 
+          iframe.style.height = "auto"; // initial height
           iframe.style.border = "0";
           iframe.style.borderRadius = "12px";
 
