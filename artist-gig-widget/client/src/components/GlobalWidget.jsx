@@ -85,12 +85,12 @@ useEffect(() => {
 
 
   if (loading) return <div className="loading">Loading gigs…</div>;
-  if (!gigs.length) return <div className="empty">No gigs et.</div>;
+  if (!gigs.length) return <div className="empty">No Gigs Scheduled.</div>;
 
   const filtered = applyFilter(gigs);
 
   return (
-    <div className="gig-widget">
+    <div className="g-gig-widget">
       <div className="gig-controls">
         <div className="gig-filters">
           <button

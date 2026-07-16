@@ -119,14 +119,15 @@ export default function WidgetArtist() {
   );
   if (!gigs.length) return (
     <div className="gig-status-container">
-      <p className="gig-status-message"> No gigs .</p>
+      <p className="gig-status-message"> No gigs scheduled...</p>
     </div>
   );
 
   const filtered = applyFilter(gigs);
 
   return (
-    <div className="gig-widget">
+    <div 
+    className="gig-widget">
       <div className="gig-controls">
         <div className="gig-filters">
 

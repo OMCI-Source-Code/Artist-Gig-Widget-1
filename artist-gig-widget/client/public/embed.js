@@ -33,22 +33,22 @@
 
 
       const type = el.getAttribute("data-type") || "public"; // "public" or "artist"
-      const artistId = el.getAttribute("data-user-id") || "";
+      const artistUId = el.getAttribute("data-user-id") || "";
       const view = el.getAttribute("data-view") || "card";
 
       // Unique button key
-      const key = type === "artist" ? `artist-${artistId}` : "public";
+      const key = type === "artist" ? `artist-${artistUId}` : "public";
       if (createdButtons[key]) return;
       createdButtons[key] = true;
 
       // API URL
       let apiUrl;
       if (type === "artist") {
-        if (!artistId) {
+        if (!artistUId) {
           console.error("Artist widget requires data-artist-id");
           return;
         }
-        apiUrl = `${apiOrigin}/gigs/user/${encodeURIComponent(artistId)}`;
+        apiUrl = `${apiOrigin}/gigs/user/${encodeURIComponent(artistUId)}`;
       } else {
         apiUrl = `${apiOrigin}/gigs/public`;
       }
@@ -100,8 +100,8 @@
             const badge = document.createElement("div");
             badge.innerText = count;
             badge.style.position = "absolute";
-            badge.style.top = "-6px";       
-            badge.style.right = "-6px";     
+            badge.style.top = "-6px";
+            badge.style.right = "-6px";
             badge.style.background = "#ff4757";
             badge.style.color = "#fff";
             badge.style.fontSize = "12px";
@@ -139,35 +139,71 @@
 
           // Card container
           const card = document.createElement("div");
-          card.style.position = "relative";
           card.style.width = "90%";
           card.style.maxWidth = "800px";
-          card.style.height = "auto"; // let height adjust
-          card.style.background = "#fff";
+          card.style.background = "#000";
           card.style.borderRadius = "12px";
           card.style.overflow = "hidden";
-          card.style.boxShadow = "0 8px 24px rgba(0,0,0,0.3)";
-          card.style.transform = "translateY(40px) scale(0.95)";
-          card.style.transition =
-            "transform 0.3s ease, opacity 0.3s ease";
+          card.style.border = "none";
+          card.style.padding = "0";
+          card.style.margin = "0";
+          card.style.boxShadow = "0 8px 24px rgba(0,0,0,.3)";
+          card.style.display = "flex";
+          card.style.flexDirection = "column";
+
+          card.style.transform = "translateY(40px) scale(.95)";
+          card.style.transition = "transform .3s ease, opacity .3s ease";
           card.style.opacity = "0";
 
           // Close button
-          const closeBtn = document.createElement("div");
+          const closeBtn = document.createElement("button");
           closeBtn.innerHTML = "&times;";
-          closeBtn.style.position = "absolute";
-          closeBtn.style.top = "10px";
-          closeBtn.style.right = "15px";
+          closeBtn.style.background = "transparent";
+          closeBtn.style.border = "none";
+          closeBtn.style.outline = "none";
+          closeBtn.style.boxShadow = "none";
+          closeBtn.style.appearance = "none";
+          closeBtn.style.webkitAppearance = "none";
+          closeBtn.style.borderRadius = "0";
+          closeBtn.style.color = "white";
           closeBtn.style.fontSize = "28px";
-          closeBtn.style.fontWeight = "bold";
           closeBtn.style.cursor = "pointer";
-          closeBtn.style.color = "#333";
+          closeBtn.style.padding = "0";
+          closeBtn.style.width = "36px";
+          closeBtn.style.height = "36px";
+          closeBtn.style.lineHeight = "1";
+          closeBtn.addEventListener("mouseenter", () => {
+            closeBtn.style.color = "#d9ae4c";
+          });
+          closeBtn.addEventListener("mouseleave", () => {
+            closeBtn.style.color = "white";
+          });
           closeBtn.addEventListener("click", () => {
             modal.style.opacity = "0";
             card.style.opacity = "0";
             card.style.transform = "translateY(40px) scale(0.95)";
             setTimeout(() => (modal.style.display = "none"), 300);
           });
+
+          const header = document.createElement("div");
+
+          header.style.height = "56px";
+          header.style.display = "flex";
+          header.style.alignItems = "center";
+          header.style.justifyContent = "space-between";
+          header.style.padding = "0 16px";
+          header.style.background = "#111";
+          header.style.borderBottom = "1px solid #222";
+          header.style.borderRadius = "12px 12px 0 0";
+
+          const title = document.createElement("div");
+
+          title.innerText = "Upcoming Gigs";
+
+          title.style.color = "#d9ae4c";
+          title.style.fontSize = "18px";
+          title.style.fontWeight = "700";
+          title.style.letterSpacing = "0.5px";
 
           // Iframe
           const iframe = document.createElement("iframe");
@@ -179,8 +215,8 @@
             iframeSrc = `${origin}/#/widget/calendar?api=${encodeURIComponent(apiOrigin)}`;
           } else if (type === "artist") {
             // artist widget
-            iframeSrc = `${origin}/#/widget/artist?artistId=${encodeURIComponent(
-              artistId
+            iframeSrc = `${origin}/#/widget/artist?artistUId=${encodeURIComponent(
+              artistUId
             )}&view=${encodeURIComponent(view)}&api=${encodeURIComponent(apiOrigin)}`;
           } else {
             // global widget
@@ -190,11 +226,12 @@
           }
 
           iframe.src = iframeSrc;
-
           iframe.style.width = "100%";
-          iframe.style.height = "auto"; // initial height
-          iframe.style.border = "0";
-          iframe.style.borderRadius = "12px";
+          iframe.style.height = "600px";
+          iframe.style.display = "block";
+          iframe.style.border = "none";
+          iframe.style.borderRadius = "0";
+
 
           // 🔑 Auto-resize listener
           window.addEventListener("message", (event) => {
@@ -204,8 +241,13 @@
             }
           });
 
-          card.appendChild(closeBtn);
+
+          header.appendChild(title);
+          header.appendChild(closeBtn);
+
+          card.appendChild(header);
           card.appendChild(iframe);
+
           modal.appendChild(card);
           document.body.appendChild(modal);
 

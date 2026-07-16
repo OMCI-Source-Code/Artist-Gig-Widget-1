@@ -7,7 +7,9 @@
     padding: 1rem;
     max-height: 600px;
     overflow-y: auto;
-    background: #000;
+    background: #111;
+    border-radius: 0px, 0px, 12px, 12px; 
+
 }
 
 /* ===========================
@@ -28,7 +30,7 @@
 
 .gig-status-message {
     color: #d9ae4c;
-    font-size: 1rem;
+    font-size: 1.5rem;
     font-weight: 500;
 }
 
@@ -57,21 +59,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-
     padding: 8px 18px;
-
     border: 1px solid #333;
-
     border-radius: 999px;
-
     background: #111;
-
     color: #d9ae4c;
-
     cursor: pointer;
-
     transition: all .2s ease;
-
     user-select: none;
 }
 
@@ -93,17 +87,13 @@
 
 .refresh-btn {
     margin-left: auto;
-
     width: 40px;
     height: 40px;
-
     display: flex;
     justify-content: center;
     align-items: center;
-
     border-radius: 50%;
-
-    font-size: 18px;
+    font-size: 26px;
 }
 
 /* ===========================
@@ -114,17 +104,11 @@
 .gig-sort,
 .gig-date {
     width: 100%;
-
     margin-bottom: 12px;
-
     padding: 10px 12px;
-
     border-radius: 8px;
-
     border: 1px solid #333;
-
     background: #111;
-
     color: white;
 }
 
@@ -140,21 +124,15 @@
 
 .gig-card {
     background: #111;
-
     border: 1px solid #2b2b2b;
-
     border-radius: 14px;
-
     padding: 20px;
-
     transition: all .25s ease;
-
     box-shadow: 0 6px 18px rgba(0,0,0,.25);
 }
 
 .gig-card:hover {
     transform: translateY(-4px);
-
     box-shadow: 0 12px 28px rgba(0,0,0,.4);
 }
 
@@ -178,23 +156,16 @@
 
 .gig-meta {
     margin: 18px 0;
-
     display: flex;
-
     flex-direction: column;
-
     gap: 10px;
 }
 
 .meta-row {
     display: flex;
-
     gap: 10px;
-
     align-items: flex-start;
-
     color: #ddd;
-
     font-size: .95rem;
 }
 
@@ -204,28 +175,22 @@
 
 .gig-section {
     margin-top: 18px;
-
     padding-top: 18px;
-
     border-top: 1px solid #222;
 }
 
 .gig-section h4 {
     margin: 0 0 8px;
-
     color: #d9ae4c;
-
     font-size: .95rem;
-
     text-transform: uppercase;
-
     letter-spacing: 1px;
 }
 
 .gig-section p {
     margin: 0;
 
-    color: #474545;
+    color: #ffffff;
 
     line-height: 1.6;
 }
