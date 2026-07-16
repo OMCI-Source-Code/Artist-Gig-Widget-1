@@ -9,7 +9,7 @@ export default function WidgetArtist() {
   const [loading, setLoading] = useState(true);
 
   // Filters
-  const [filter, setFilter] = useState("upcoming"); 
+  const [filter, setFilter] = useState("upcoming");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("soonest");
   const [startDate, setStartDate] = useState("");
@@ -56,22 +56,22 @@ export default function WidgetArtist() {
     load();
   }
 
-const MAX_HEIGHT = 600;
+  const MAX_HEIGHT = 600;
 
-useEffect(() => {
-  function sendHeight() {
-    const widget = document.querySelector(".gig-widget");
-    if (widget) {
-      const height = Math.min(widget.scrollHeight, MAX_HEIGHT);
-      window.parent.postMessage({ type: "resizeWidget", height }, "*");
+  useEffect(() => {
+    function sendHeight() {
+      const widget = document.querySelector(".gig-widget");
+      if (widget) {
+        const height = Math.min(widget.scrollHeight, MAX_HEIGHT);
+        window.parent.postMessage({ type: "resizeWidget", height }, "*");
+      }
     }
-  }
 
-  sendHeight();
+    sendHeight();
 
-  window.addEventListener("resize", sendHeight);
-  return () => window.removeEventListener("resize", sendHeight);
-}, [gigs, filter, search, sort, startDate]);
+    window.addEventListener("resize", sendHeight);
+    return () => window.removeEventListener("resize", sendHeight);
+  }, [gigs, filter, search, sort, startDate]);
 
 
 
@@ -79,7 +79,7 @@ useEffect(() => {
     const now = new Date();
     let result = [...gigs];
 
-    result = result.filter((g) => !g.ea_public_only && !g.p_public_only); 
+    result = result.filter((g) => !g.ea_public_only && !g.p_public_only);
 
     if (filter === "upcoming") {
       result = result.filter((g) => new Date(g.date_time) >= now);
@@ -112,16 +112,16 @@ useEffect(() => {
     return result;
   }
 
-  if (loading) return  (
-  <div className="gig-status-container">
-    <p className="gig-status-message">Loading gigs…</p>
-  </div>
-);
-  if (!gigs.length) return(
+  if (loading) return (
     <div className="gig-status-container">
-     <p className="gig-status-message"> No gigs .</p>
+      <p className="gig-status-message">Loading gigs…</p>
     </div>
-  ) ;
+  );
+  if (!gigs.length) return (
+    <div className="gig-status-container">
+      <p className="gig-status-message"> No gigs .</p>
+    </div>
+  );
 
   const filtered = applyFilter(gigs);
 
@@ -129,25 +129,45 @@ useEffect(() => {
     <div className="gig-widget">
       <div className="gig-controls">
         <div className="gig-filters">
-          <button
-            className={filter === "all" ? "active" : ""}
-            onClick={() => setFilter("all")}
-          >
+
+          <label className={`filter-pill ${filter === "all" ? "active" : ""}`}>
+            <input
+              type="radio"
+              name="gigFilter"
+              checked={filter === "all"}
+              onChange={() => setFilter("all")}
+            />
             All
-          </button>
-          <button
-            className={filter === "upcoming" ? "active" : ""}
-            onClick={() => setFilter("upcoming")}
-          >
+          </label>
+
+          <label className={`filter-pill ${filter === "upcoming" ? "active" : ""}`}>
+            <input
+              type="radio"
+              name="gigFilter"
+              checked={filter === "upcoming"}
+              onChange={() => setFilter("upcoming")}
+            />
             Upcoming
-          </button>
+          </label>
+
+          <label className={`filter-pill ${filter === "past" ? "active" : ""}`}>
+            <input
+              type="radio"
+              name="gigFilter"
+              checked={filter === "past"}
+              onChange={() => setFilter("past")}
+            />
+            Previous
+          </label>
+
           <button
-            className={filter === "past" ? "active" : ""}
-            onClick={() => setFilter("past")}
+            className="refresh-btn"
+            onClick={refreshGigs}
+            type="button"
           >
-            Past
+            ⟳
           </button>
-          <button className="refresh-btn" onClick={refreshGigs}>⟳</button>
+
         </div>
 
         <input
@@ -178,38 +198,81 @@ useEffect(() => {
       <div className="card-container">
         {filtered.map((gig) => (
           <div key={gig.id} className="gig-card">
-            <div className="card-content">
-              <h3 className="gig-title">{gig.title}</h3>
-              <p className="gig-datetime">
-                {new Date(gig.date_time).toLocaleString()}
-                {gig.end_time
-                  ? " - " + new Date(gig.end_time).toLocaleTimeString()
-                  : ""}{" "}
-                — {gig.venue}
-              </p>
 
-              {gig.description && (
-                <p className="gig-description">{gig.description}</p>
-              )}
-              {gig.directions && (
-                <p className="gig-directions">🧭 {gig.directions}</p>
-              )}
-
-              <div className="gig-flags">
-                {gig.ea_public_only && (
-                  <span className="flag ea">3 EA CEP</span>
-                )}
-                {gig.p_public_only && <span className="flag p">3P</span>}
-              </div>
+            <div className="gig-header">
+              <h3>{gig.title}</h3>
             </div>
 
+            <div className="gig-meta">
+
+              <div className="meta-row">
+                <span>📅</span>
+                <span>
+                  {new Date(gig.date_time).toLocaleDateString(undefined, {
+                    weekday: "long",
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </span>
+              </div>
+
+              <div className="meta-row">
+                <span>🕒</span>
+                <span>
+                  {new Date(gig.date_time).toLocaleTimeString([], {
+                    hour: "numeric",
+                    minute: "2-digit",
+                  })}
+
+                  {gig.end_time &&
+                    ` - ${new Date(gig.end_time).toLocaleTimeString([], {
+                      hour: "numeric",
+                      minute: "2-digit",
+                    })}`}
+                </span>
+              </div>
+
+              <div className="meta-row">
+                <span>📍</span>
+                <span>{gig.venue}</span>
+              </div>
+
+              {gig.age_restriction && (
+                <div className="meta-row">
+                  <span>🔞</span>
+                  <span>{gig.age_restriction}</span>
+                </div>
+              )}
+
+            </div>
+
+            {gig.description && (
+              <div className="gig-section">
+                <h4>Description</h4>
+                <p>{gig.description}</p>
+              </div>
+            )}
+
+            {gig.directions && (
+              <div className="gig-section">
+                <h4>Directions</h4>
+                <p>{gig.directions}</p>
+              </div>
+            )}
+
             {gig.link && (
-              <div className="card-footer">
-                <a href={gig.link} target="_blank" rel="noreferrer">
-                  Event Link
+              <div className="gig-footer">
+                <a
+                  href={gig.link}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  View Event →
                 </a>
               </div>
             )}
+
           </div>
         ))}
       </div>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { apiFetch } from "../api.js";
+import { apiFetch, adminGigsFetch } from "../api.js";
 import Protected from "./ProtectedRoute.jsx";
 import GigForm from "./GigForm.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
@@ -21,11 +21,11 @@ function Inner() {
   const [showCopiedToast, setShowCopiedToast] = useState(false);
   const [filter, setFilter] = useState("upcoming");
   const { user } = useAuth();
-  const admin = user?.admin;
+  //const admin = user?.admin;
 
   async function load() {
     try {
-      const rows = await apiFetch("/gigs/all");
+  const rows = await adminGigsFetch();
       setGigs(rows);
     } catch (err) {
       console.error(err);
@@ -226,6 +226,9 @@ function Inner() {
                       {g.title}
                     </div>
                     <div className="gig-meta">
+                      {g.artist_name && (
+                        <span>🎤 {g.artist_name}</span>
+                      )}
                       <span>
                         📅 {new Date(g.date_time).toLocaleString()}
                         {g.end_time

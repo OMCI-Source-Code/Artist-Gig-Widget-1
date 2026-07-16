@@ -57,6 +57,7 @@ export const updateGig       = (id, updates) => apiFetch(`/gigs/${id}`, { method
 export const deleteGig       = (id) => apiFetch(`/gigs/${id}`, { method: "DELETE" });
 export const fetchArtist     = (id) => apiFetch(`/artists/${id}`);
 export const fetchPublicGigs = () => apiFetch("/gigs/public");
+export const adminGigsFetch = () => apiFetch("/gigs/admin/gigs");
 
 
 export const fetchMe         = () => apiFetch("/auth/me");

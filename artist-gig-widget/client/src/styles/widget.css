@@ -1,99 +1,261 @@
-/* Widget Global / Artist styles */
+/* ===========================
+   Widget Container
+=========================== */
+
 .gig-widget {
-  font-family: system-ui, -apple-system, sans-serif;
-  padding: 1rem;
-  max-height: 600px;    
-  overflow-y: auto;  
+    font-family: system-ui, -apple-system, sans-serif;
+    padding: 1rem;
+    max-height: 600px;
+    overflow-y: auto;
+    background: #000;
 }
 
-.gig-status-container{
-  display: flex;
-  max-height: 600px;  
-  flex-direction: column;
-  align-items: center;
-  background-color: white;
+/* ===========================
+   Loading / Empty State
+=========================== */
 
+.gig-status-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    max-height: 600px;
+    min-height: 200px;
+
+    background: #111;
+    color: white;
 }
 
-.gig-status-message{
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-  color: #fa0000;
+.gig-status-message {
+    color: #d9ae4c;
+    font-size: 1rem;
+    font-weight: 500;
 }
 
-.gig-list {
-  display: grid;
-  gap: 1rem;
+/* ===========================
+   Controls
+=========================== */
+
+.gig-controls {
+    margin-bottom: 1.5rem;
+}
+
+/* ===========================
+   Filters
+=========================== */
+
+.gig-filters {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    margin-bottom: 1rem;
+}
+
+.filter-pill {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 8px 18px;
+
+    border: 1px solid #333;
+
+    border-radius: 999px;
+
+    background: #111;
+
+    color: #d9ae4c;
+
+    cursor: pointer;
+
+    transition: all .2s ease;
+
+    user-select: none;
+}
+
+.filter-pill:hover {
+    background: #1a1a1a;
+    border-color: #d9ae4c;
+}
+
+.filter-pill.active {
+    background: #d9ae4c;
+    color: #000;
+    border-color: #d9ae4c;
+    font-weight: 600;
+}
+
+.filter-pill input {
+    display: none;
+}
+
+.refresh-btn {
+    margin-left: auto;
+
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 50%;
+
+    font-size: 18px;
+}
+
+/* ===========================
+   Search / Sort
+=========================== */
+
+.gig-search,
+.gig-sort,
+.gig-date {
+    width: 100%;
+
+    margin-bottom: 12px;
+
+    padding: 10px 12px;
+
+    border-radius: 8px;
+
+    border: 1px solid #333;
+
+    background: #111;
+
+    color: white;
+}
+
+/* ===========================
+   Cards
+=========================== */
+
+.card-container {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
 }
 
 .gig-card {
-  background: "black";
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  padding: 1rem;
-  border: 1px solid #eee;
+    background: #111;
+
+    border: 1px solid #2b2b2b;
+
+    border-radius: 14px;
+
+    padding: 20px;
+
+    transition: all .25s ease;
+
+    box-shadow: 0 6px 18px rgba(0,0,0,.25);
 }
 
-.gig-card h3 {
-  margin: 0 0 0.5rem;
-  font-size: 1.2rem;
+.gig-card:hover {
+    transform: translateY(-4px);
+
+    box-shadow: 0 12px 28px rgba(0,0,0,.4);
 }
 
-.gig-card p {
-  margin: 0.25rem 0;
-  color: #555;
-  font-size: 0.95rem;
+/* ===========================
+   Card Header
+=========================== */
+
+.gig-header h3 {
+    margin: 0;
+
+    color: #d9ae4c;
+
+    font-size: 1.35rem;
+
+    font-weight: 700;
 }
 
-.gig-card .gig-description {
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-  color: #333;
+/* ===========================
+   Meta
+=========================== */
+
+.gig-meta {
+    margin: 18px 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
 }
 
-.gig-card .gig-link {
-  display: inline-block;
-  margin-top: 0.5rem;
-  padding: 0.4rem 0.8rem;
-  background: #2563eb;
-  color: white;
-  border-radius: 6px;
-  text-decoration: none;
-  font-size: 0.9rem;
-  transition: background 0.2s ease;
+.meta-row {
+    display: flex;
+
+    gap: 10px;
+
+    align-items: flex-start;
+
+    color: #ddd;
+
+    font-size: .95rem;
 }
 
-.gig-card .gig-link:hover {
-  background: #1ef613;
-}
-.gig-card .gig-link:focus {
-  outline: 2px solid #1e4db7;
-  outline-offset: 2px;
-}
+/* ===========================
+   Sections
+=========================== */
 
+.gig-section {
+    margin-top: 18px;
 
-.gig-filters {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 1rem;
-  gap: 8px;
+    padding-top: 18px;
+
+    border-top: 1px solid #222;
 }
 
-.gig-filters button {
-  background: #020202;
-  border: 1px solid #ccc;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+.gig-section h4 {
+    margin: 0 0 8px;
+
+    color: #d9ae4c;
+
+    font-size: .95rem;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
 }
 
-.gig-filters button.active {
-  background: #333;
-  color: white;
-  border-color: #333;
+.gig-section p {
+    margin: 0;
+
+    color: #474545;
+
+    line-height: 1.6;
 }
 
-.gig-filters button:hover {
-  background: #eee;
+/* ===========================
+   Footer
+=========================== */
+
+.gig-footer {
+    margin-top: 22px;
+}
+
+.gig-footer a {
+    display: inline-block;
+
+    padding: 10px 18px;
+
+    border-radius: 8px;
+
+    background: #d9ae4c;
+
+    color: black;
+
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition: .2s;
+}
+
+.gig-footer a:hover {
+    background: #f2c766;
 }

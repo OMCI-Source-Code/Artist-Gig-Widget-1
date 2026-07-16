@@ -33,22 +33,22 @@
 
 
       const type = el.getAttribute("data-type") || "public"; // "public" or "artist"
-      const artistUId = el.getAttribute("data-user-id") || "";
+      const artistId = el.getAttribute("data-user-id") || "";
       const view = el.getAttribute("data-view") || "card";
 
       // Unique button key
-      const key = type === "artist" ? `artist-${artistUId}` : "public";
+      const key = type === "artist" ? `artist-${artistId}` : "public";
       if (createdButtons[key]) return;
       createdButtons[key] = true;
 
       // API URL
       let apiUrl;
       if (type === "artist") {
-        if (!artistUId) {
+        if (!artistId) {
           console.error("Artist widget requires data-artist-id");
           return;
         }
-        apiUrl = `${apiOrigin}/gigs/user/${encodeURIComponent(artistUId)}`;
+        apiUrl = `${apiOrigin}/gigs/user/${encodeURIComponent(artistId)}`;
       } else {
         apiUrl = `${apiOrigin}/gigs/public`;
       }
@@ -179,8 +179,8 @@
             iframeSrc = `${origin}/#/widget/calendar?api=${encodeURIComponent(apiOrigin)}`;
           } else if (type === "artist") {
             // artist widget
-            iframeSrc = `${origin}/#/widget/artist?artistUId=${encodeURIComponent(
-              artistUId
+            iframeSrc = `${origin}/#/widget/artist?artistId=${encodeURIComponent(
+              artistId
             )}&view=${encodeURIComponent(view)}&api=${encodeURIComponent(apiOrigin)}`;
           } else {
             // global widget

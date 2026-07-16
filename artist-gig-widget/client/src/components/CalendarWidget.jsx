@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../styles/calendar.css"
 import "../styles/modal.css"
-import { fetchGigs } from "../api";
+import { adminGigsFetch, fetchGigs } from "../api";
 import Modal from "./Modal";
 import { Link } from "react-router-dom";
 
@@ -20,7 +20,7 @@ export default function CalendarWidget() {
   useEffect(() => {
     async function load() {
       try {
-        const data = await fetchGigs();
+        const data = await adminGigsFetch();
         const approved = data.filter((g) => g.approved === true);
         setGigs(approved);
       } catch (err) {
@@ -138,10 +138,19 @@ export default function CalendarWidget() {
             })}
           </span>
 
-          {currentGig.created_by_user_id && (
+          {currentGig.artist_name && (
             <span>
-              🎤 {currentGig.created_by_user_id}
+              🎤 {currentGig.artist_name}
             </span>
+          )}
+          {currentGig.artist_website && (
+            <a
+              href={currentGig.artist_website}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {currentGig.artist_name}'s website'
+            </a>
           )}
         </div>
       </div>

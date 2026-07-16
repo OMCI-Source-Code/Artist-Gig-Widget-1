@@ -56,8 +56,8 @@ export default function GigForm({ initial = {}, onSave, onCancel }) {
   }
 
   function resetForm() {
-  setForm({...emptyForm});
-}
+    setForm({ ...emptyForm });
+  }
 
 
   async function submit(e) {
@@ -70,6 +70,7 @@ export default function GigForm({ initial = {}, onSave, onCancel }) {
     if (Object.keys(validationErrors).length > 0) {
       return;
     }
+    
     const body = {
       ...form,
       date_time: new Date(form.date_time).toISOString(),
@@ -136,8 +137,8 @@ export default function GigForm({ initial = {}, onSave, onCancel }) {
           required
         />
         {errors.date_time && (
-  <p className="error">{errors.date_time}</p>
-)}
+          <p className="error">{errors.date_time}</p>
+        )}
       </label>
 
       <label>
@@ -148,8 +149,8 @@ export default function GigForm({ initial = {}, onSave, onCancel }) {
           onChange={(e) => update("end_time", e.target.value)}
         />
         {errors.end_time && (
-  <p className="error">{errors.end_time}</p>
-)}
+          <p className="error">{errors.end_time}</p>
+        )}
       </label>
 
       <label>

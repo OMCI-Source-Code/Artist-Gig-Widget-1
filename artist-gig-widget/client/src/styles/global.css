@@ -114,65 +114,7 @@ code, pre {
   display: block;
   overflow-x: auto;
 }
-.gig-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
 
-.gig-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 1rem 1.25rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.gig-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
-}
-
-.gig-card h3 {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #d9ae4c; 
-  margin-bottom: 0.25rem;
-}
-
-.gig-card time {
-  display: block;
-  font-size: 0.9rem;
-  color: #555;
-  margin-bottom: 0.25rem;
-}
-
-.gig-card em {
-  display: block;
-  font-size: 0.85rem;
-  color: #666;
-  margin-bottom: 0.5rem;
-}
-
-.gig-card p {
-  font-size: 0.95rem;
-  margin-bottom: 0.5rem;
-}
-
-.gig-card a {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #2563eb;
-  text-decoration: none;
-}
-
-.gig-card a:hover {
-  text-decoration: underline;
-}
-.gig-widget {
-  font-family: system-ui, -apple-system, sans-serif;
-  padding: 1rem;
-}
 
 /* ===== Mobile ===== */
 @media (max-width: 768px) {
@@ -226,11 +168,4 @@ code, pre {
     font-size: 0.8rem;
   }
 
-  .gig-card {
-    padding: 1rem;
-  }
-
-  .gig-card h3 {
-    font-size: 1rem;
-  }
 }

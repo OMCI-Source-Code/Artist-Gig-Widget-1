@@ -255,4 +255,23 @@ router.get("/user/:id", async (req, res) => {
   }
 });
 
+router.get("/admin/gigs", async (req, res) =>{
+  try{
+    const { rows } = await query(
+      `SELECT gigs.*, artists.artist_name AS artist_name, artists.website AS artist_website
+      FROM gigs 
+      LEFT JOIN users 
+      ON gigs.created_by_user_id = users.id
+      LEFT JOIN artists
+      ON users.id = artists.user_id
+      ORDER BY gigs.date_time ASC;
+      `
+    ); 
+    res.json(rows);
+  }catch(err){
+    console.log("Error Fetching Gigs - ", err)
+    res.status(500).json({error: "Failed to fetch gigs", err})
+  }
+})
+
 export default router;
