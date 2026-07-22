@@ -1,22 +1,23 @@
 import express from "express";
 import { query } from "../db.js";
 import { authMiddleware } from "../middleware/auth.js";
+import { sendGigMadeEmail } from "../services/emailService.js"
 
 const router = express.Router();
 
-// maybe remove this?
-router.get("/mine", authMiddleware, async (req, res) => {
-  try {
-    const { rows } = await query(
-      "SELECT * FROM gigs WHERE created_by_user_id = $1 ORDER BY date_time ASC",
-      [req.user.id]
-    );
-    res.json(rows);
-  } catch (err) {
-    console.error("Error fetching gigs:", err);
-    res.status(500).json({ error: "Failed to fetch gigs" });
-  }
-});
+// // maybe remove this?
+// router.get("/mine", authMiddleware, async (req, res) => {
+//   try {
+//     const { rows } = await query(
+//       "SELECT * FROM gigs WHERE created_by_user_id = $1 ORDER BY date_time ASC",
+//       [req.user.id]
+//     );
+//     res.json(rows);
+//   } catch (err) {
+//     console.error("Error fetching gigs:", err);
+//     res.status(500).json({ error: "Failed to fetch gigs" });
+//   }
+// });
 
 
 router.post("/", authMiddleware, async (req, res) => {
@@ -71,6 +72,9 @@ router.post("/", authMiddleware, async (req, res) => {
     );
 
     res.json(rows[0]);
+
+    sendGigMadeEmail(rows[0]);
+
   } catch (err) {
     console.error("Error creating gig:", err);
     res.status(500).json({ error: "Failed to create gig" });

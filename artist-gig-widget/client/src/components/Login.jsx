@@ -59,7 +59,7 @@ export default function Login() {
 
   const validate = (values) => {
     const errors = {}
-    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+    const regex = /^[a-zA-Z0-9._%+-]+@canadianmusicians\.coop$/
 
 
     if (!values.email) {
