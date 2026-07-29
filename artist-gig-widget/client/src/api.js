@@ -58,6 +58,8 @@ export const deleteGig       = (id) => apiFetch(`/gigs/${id}`, { method: "DELETE
 export const fetchArtist     = (id) => apiFetch(`/artists/${id}`);
 export const fetchPublicGigs = () => apiFetch("/gigs/public");
 export const adminGigsFetch = () => apiFetch("/gigs/admin/gigs");
+export const resetPassword = ({ password, resetToken }) => apiFetch("/auth/reset-password", { method: "POST", body: JSON.stringify({ password, resetToken }),});
+export const forgotPassword  = (email) => apiFetch("/auth/forgot-password", { method: "POST", body: JSON.stringify({ email }) });
 
 
 export const fetchMe         = () => apiFetch("/auth/me");

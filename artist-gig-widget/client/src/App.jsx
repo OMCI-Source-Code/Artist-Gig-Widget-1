@@ -8,6 +8,8 @@ import Login from "./components/Login.jsx";
 import Register from "./components/Register.jsx";
 import Dashboard from "./components/Dashboard.jsx";
 import AdminDashboard from "./components/AdminDashboard.jsx";
+import ResetPassword from "./components/ResetPassword.jsx";
+import ForgotPassword from "./components/ForgotPassword.jsx";
 
 import "./styles/global.css";
 
@@ -99,6 +101,17 @@ export default function App() {
         <Route
           path="/register"
           element={<Register />}
+        />
+
+        <Route
+          path="/reset-password/"
+          element={<ResetPassword />}
+        />
+
+        <Route
+        path="/forgot-password/"
+        element={<ForgotPassword />}
+        
         />
 
         {/* Fallback */}

@@ -11,8 +11,12 @@ export default function Login() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [formErrors, setFormErrors] = useState({})
   const [isSubmit, setIsSubmit] = useState(false)
+  const [forgotPW, setForgotPW] = useState(false)
+  const [forgotPWMessage, setForgotPWMessage] = useState('')
 
   const { login } = useAuth();
+
+
 
 
   const handleSubmit = async (e) => {
@@ -42,9 +46,27 @@ export default function Login() {
         navigate("/dashboard");
       } else if (res.user.user_role === "admin") {
         navigate("/admin-dashboard");
-      }else {
+      } else {
         navigate("/");
       }
+    } catch (err) {
+      setFormErrors({ api: "Invalid email or password" });
+    }
+  }
+
+  const handleForgotPW = async (e) => {
+    e.preventDefault();
+
+    const errors = validate(form);
+    setFormErrors(errors);
+    setIsSubmit(true);
+
+    if (Object.keys(errors).length > 0) return;
+
+    try {
+      const res = // route to update password
+      
+      setForgotPWMessage("Password Reset Email Sent")
     } catch (err) {
       setFormErrors({ api: "Invalid email or password" });
     }
@@ -77,56 +99,68 @@ export default function Login() {
 
   return (
     <div className="auth-page">
-        <div className="auth-card">
+      <div className="auth-card">
 
+          <div>
             <h2>Welcome Back</h2>
-
             <form className="auth-form" onSubmit={handleSubmit}>
 
-                <input
-                    type="email"
-                    placeholder="Email"
-                    value={form.email}
-                    onChange={e =>
-                        setForm({ ...form, email: e.target.value })
-                    }
-                />
+              <input
+                type="email"
+                placeholder="Email"
+                value={form.email}
+                onChange={e =>
+                  setForm({ ...form, email: e.target.value })
+                }
+              />
 
-                {formErrors.email && (
-                    <p className="error">{formErrors.email}</p>
-                )}
+              {formErrors.email && (
+                <p className="error">{formErrors.email}</p>
+              )}
 
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={form.password}
-                    onChange={e =>
-                        setForm({ ...form, password: e.target.value })
-                    }
-                />
+              <input
+                type="password"
+                placeholder="Password"
+                value={form.password}
+                onChange={e =>
+                  setForm({ ...form, password: e.target.value })
+                }
+              />
 
-                {formErrors.password && (
-                    <p className="error">{formErrors.password}</p>
-                )}
+              {formErrors.password && (
+                <p className="error">{formErrors.password}</p>
+              )}
 
-                {formErrors.api && (
-                    <p className="error">{formErrors.api}</p>
-                )}
+              {formErrors.api && (
+                <p className="error">{formErrors.api}</p>
+              )}
 
-                <button type="submit">
-                    Login
-                </button>
+              <button type="submit">
+                Login
+              </button>
 
             </form>
 
             <div className="auth-footer">
-                Don't have an account?{" "}
-                <Link to="/register">
-                    Register
-                </Link>
+              Don't have an account?{" "}
+              <Link to="/register">
+                Register
+              </Link>
             </div>
+            <div className="auth-footer">
+              <div className="auth-footer">
+    <Link to="/forgot-password">
+        Forgot Password?
+    </Link>
+</div>
+            </div>
+          </div>
 
-        </div>
+
+
+
+
+      </div>
     </div>
-);
+  );
 }

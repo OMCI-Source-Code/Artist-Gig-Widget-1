@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from "bcryptjs";
 import { query } from './db.js';
+import { createHash } from 'crypto';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev_secret';
 
@@ -68,6 +69,19 @@ export async function createArtistForUser(userId, website, artist_name) {
 export async function findUserByEmail(email){
       const { rows } = await query('SELECT * FROM users WHERE email=$1', [email]);
       return rows[0];
+}
+
+export async function validateResetToken(token) {
+  const hashedToken = createHash("sha256").update(token).digest("hex");
+  const { rows } = await query(
+    'SELECT * FROM users WHERE reset_token=$1 AND reset_token_expires > NOW()',[hashedToken]
+  )
+
+  if (rows.length === 0) {
+    return res.status(400).json({ error: "Invalid reset token" });
+  }else{
+    return rows[0];
+  }
 }
 export async function createAdmin({name, email, password}) {
   const user = await createUser(name, email, password, "admin");

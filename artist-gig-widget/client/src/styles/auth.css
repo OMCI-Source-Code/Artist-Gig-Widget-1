@@ -63,3 +63,51 @@
 .auth-footer a:hover {
     color: white;
 }
+.auth-subtitle {
+    color: #999;
+    text-align: center;
+    margin: -1rem 0 1.75rem;
+    line-height: 1.5;
+    font-size: .95rem;
+}
+
+.success-message {
+    text-align: center;
+    color: #8ddf8d;
+    line-height: 1.6;
+    margin: 1.5rem 0;
+}
+
+.auth-card button {
+    transition: background .2s ease,
+                transform .15s ease,
+                opacity .2s ease;
+}
+
+.auth-card button:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.auth-card button:disabled {
+    opacity: .7;
+    cursor: not-allowed;
+}
+
+.auth-form input:focus {
+    outline: none;
+    border-color: #d9ae4c;
+    box-shadow: 0 0 0 3px rgba(217,174,76,.15);
+}
+
+.auth-footer button {
+    background: none;
+    border: none;
+    color: #d9ae4c;
+    cursor: pointer;
+    padding: 0;
+    font-size: inherit;
+}
+
+.auth-footer button:hover {
+    color: white;
+}
