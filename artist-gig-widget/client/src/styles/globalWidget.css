@@ -81,6 +81,11 @@
   border-bottom: none;
 }
 
+.gig-artist, .gig-description, .gig-datetime {
+  font-size: 0.9rem;
+  color: #ffffff;
+}
+
 /* Date block */
 .gig-event-date {
   flex-shrink: 0;
@@ -102,7 +107,7 @@
 
 .gig-event-date .date {
   font-size: 1rem;
-  color: #111;
+  color: #ffffff;
 }
 
 /* Event info */

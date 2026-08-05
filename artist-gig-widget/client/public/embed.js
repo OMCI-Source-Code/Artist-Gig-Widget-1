@@ -212,15 +212,15 @@
 
           if (view === "calendar") {
             // Calendar widget
-            iframeSrc = `${origin}/#/widget/calendar?api=${encodeURIComponent(apiOrigin)}`;
+            iframeSrc = `${origin}/widget/calendar?api=${encodeURIComponent(apiOrigin)}`;
           } else if (type === "artist") {
             // artist widget
-            iframeSrc = `${origin}/#/widget/artist?artistUId=${encodeURIComponent(
+            iframeSrc = `${origin}/widget/artist?artistUId=${encodeURIComponent(
               artistUId
             )}&view=${encodeURIComponent(view)}&api=${encodeURIComponent(apiOrigin)}`;
           } else {
             // global widget
-            iframeSrc = `${origin}/#/widget/global?view=${encodeURIComponent(
+            iframeSrc = `${origin}/widget/global?view=${encodeURIComponent(
               view
             )}&api=${encodeURIComponent(apiOrigin)}`;
           }

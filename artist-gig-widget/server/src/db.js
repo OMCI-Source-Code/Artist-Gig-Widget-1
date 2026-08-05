@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config({ path: ".env.development" })
-console.log("DB URL:", process.env.DATABASE_URL);
-console.log("ENV file loaded, DATABASE_URL:", process.env.DATABASE_URL);
+// console.log("DB URL:", process.env.DATABASE_URL);
+// console.log("ENV file loaded, DATABASE_URL:", process.env.DATABASE_URL);
 import pkg from "pg";
 const { Pool } = pkg;
 import bcrypt from "bcryptjs";

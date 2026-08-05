@@ -2,6 +2,7 @@ import express from "express";
 import { query } from "../db.js";
 import { authMiddleware } from "../middleware/auth.js";
 import { sendGigMadeEmail } from "../services/emailService.js"
+import RSS from "rss";
 
 const router = express.Router();
 
@@ -212,18 +213,65 @@ router.delete("/:id", authMiddleware, async (req, res) => {
 router.get("/public", async (req, res) => {
   try {
     const { rows } = await query(
-      `SELECT gigs.*, artists.artist_name
-        FROM gigs
-        JOIN artists ON artists.user_id = gigs.created_by_user_id
-        WHERE gigs.private = false 
-          AND gigs.approved = true 
-          AND (
-            gigs.share_with_coop = true
-            OR gigs.share_with_external = true
-          )
-      ORDER BY date_time ASC;`
+      `SELECT gigs.*, artists.artist_name AS artist_name, artists.website AS artist_website
+      FROM gigs 
+      LEFT JOIN users 
+      ON gigs.created_by_user_id = users.id
+      LEFT JOIN artists
+      ON users.id = artists.user_id
+      WHERE gigs.private = false
+      AND gigs.approved = true
+      AND gigs.share_with_external = true
+      ORDER BY gigs.date_time ASC;`
     );
+
     res.json(rows);
+
+  } catch (err) {
+    console.error("Error fetching public gigs:", err);
+    res.status(500).json({ error: "Failed to fetch gigs" });
+  }
+});
+
+// Public gigs for rss feed
+router.get("/rss", async (req, res) => {
+  try {
+    const { rows } = await query(
+      `SELECT gigs.*, artists.artist_name AS artist_name, artists.website AS artist_website
+      FROM gigs 
+      LEFT JOIN users 
+      ON gigs.created_by_user_id = users.id
+      LEFT JOIN artists
+      ON users.id = artists.user_id
+      WHERE gigs.private = false
+      AND gigs.approved = true
+      AND gigs.share_with_external = true
+      ORDER BY gigs.date_time ASC;`
+    );
+
+    const feed = new RSS({
+      title: "Gigs",
+      description: "Gigs",
+      site_url: "http://localhost:5173/",
+      feed_url: "http://localhost:5173/api/gigs/rss",
+    });
+
+    rows.forEach((gig) => {
+      feed.item({
+        guid: gig.id,
+        title: `${gig.artist_name} - ${gig.title} @ ${gig.venue}`,
+        description: `
+          description:${gig.description}
+          \ndate:${gig.date_time}
+          \nvenue:${gig.venue}
+          \nage restriction:${gig.age_restriction}`,
+        ...(gig.link && { url: gig.link })
+      })
+    })
+
+    res.set("Content-Type", "text/xml");
+    res.send(feed.xml());
+    
   } catch (err) {
     console.error("Error fetching public gigs:", err);
     res.status(500).json({ error: "Failed to fetch gigs" });
