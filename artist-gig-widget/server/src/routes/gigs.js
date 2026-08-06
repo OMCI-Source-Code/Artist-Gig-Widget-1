@@ -3,7 +3,27 @@ import { query } from "../db.js";
 import { authMiddleware } from "../middleware/auth.js";
 import { sendGigMadeEmail } from "../services/emailService.js"
 import RSS from "rss";
+import fs from "fs";
 
+const getPublicGigs = async () => {
+  try{
+    const { rows } = await query(
+      `SELECT gigs.*, artists.artist_name AS artist_name, artists.website AS artist_website
+      FROM gigs 
+      LEFT JOIN users 
+      ON gigs.created_by_user_id = users.id
+      LEFT JOIN artists
+      ON users.id = artists.user_id
+      WHERE gigs.private = false
+      AND gigs.approved = true
+      AND gigs.share_with_external = true
+      ORDER BY gigs.date_time ASC;`
+    );
+    return rows
+  }catch (err) {
+    console.error("Error fetching public gigs:", err);
+  }
+}
 const router = express.Router();
 
 // // maybe remove this?
@@ -212,21 +232,41 @@ router.delete("/:id", authMiddleware, async (req, res) => {
 // Public gigs for widget
 router.get("/public", async (req, res) => {
   try {
-    const { rows } = await query(
-      `SELECT gigs.*, artists.artist_name AS artist_name, artists.website AS artist_website
-      FROM gigs 
-      LEFT JOIN users 
-      ON gigs.created_by_user_id = users.id
-      LEFT JOIN artists
-      ON users.id = artists.user_id
-      WHERE gigs.private = false
-      AND gigs.approved = true
-      AND gigs.share_with_external = true
-      ORDER BY gigs.date_time ASC;`
-    );
+    const gigs = await getPublicGigs();
 
-    res.json(rows);
+    res.json(gigs);
 
+  } catch (err) {
+    console.error("Error fetching public gigs:", err);
+    res.status(500).json({ error: "Failed to fetch gigs" });
+  }
+});
+
+// Public gigs for json feed
+router.get("/events", async (req, res) => {
+  try {
+    const gigs = await getPublicGigs();
+
+
+    const feedData = {
+      version: "https://jsonfeed.org/version/1",
+      title: "Canadian Musicians Co-op Gig Board",
+      home_page_url: "https://canadianmusicians.coop",
+      description: "Gigs and events for Canadian Musicians Co-op. Date published is the date and time of the gig.",
+      items: gigs.map((gig) => ({
+        id: gig.id,
+        title: `${gig.artist_name} - ${gig.title} @ ${gig.venue}`,
+    content_text : `${gig.description} ${gig.age_restriction ? `- Age Restriction: ${gig.age_restriction}` : ""}`,
+        date_published: gig.date_time,
+        artist:
+        {
+          name: gig.artist_name,
+          website: gig.artist_website
+        },
+        ...(gig.link && { url: gig.link })
+      }))
+    }
+    res.json(feedData);
   } catch (err) {
     console.error("Error fetching public gigs:", err);
     res.status(500).json({ error: "Failed to fetch gigs" });
@@ -236,18 +276,7 @@ router.get("/public", async (req, res) => {
 // Public gigs for rss feed
 router.get("/rss", async (req, res) => {
   try {
-    const { rows } = await query(
-      `SELECT gigs.*, artists.artist_name AS artist_name, artists.website AS artist_website
-      FROM gigs 
-      LEFT JOIN users 
-      ON gigs.created_by_user_id = users.id
-      LEFT JOIN artists
-      ON users.id = artists.user_id
-      WHERE gigs.private = false
-      AND gigs.approved = true
-      AND gigs.share_with_external = true
-      ORDER BY gigs.date_time ASC;`
-    );
+    const gigs = await getPublicGigs();
 
     const feed = new RSS({
       title: "Gigs",
@@ -256,7 +285,7 @@ router.get("/rss", async (req, res) => {
       feed_url: "http://localhost:5173/api/gigs/rss",
     });
 
-    rows.forEach((gig) => {
+    gigs.forEach((gig) => {
       feed.item({
         guid: gig.id,
         title: `${gig.artist_name} - ${gig.title} @ ${gig.venue}`,
