@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../styles/calendar.css"
 import "../styles/modal.css"
-import { adminGigsFetch, fetchGigs } from "../api";
+import { fetchCalendarGigs } from "../api";
 import Modal from "./Modal";
 import { Link } from "react-router-dom";
 
@@ -20,9 +20,8 @@ export default function CalendarWidget() {
   useEffect(() => {
     async function load() {
       try {
-        const data = await adminGigsFetch();
-        const approved = data.filter((g) => g.approved === true);
-        setGigs(approved);
+        const data = await fetchCalendarGigs();
+        setGigs(data);
       } catch (err) {
         console.error("Calendar fetch err:", err);
       } finally {
@@ -88,9 +87,8 @@ export default function CalendarWidget() {
   const refreshGigs = () => {
     async function load() {
       try {
-        const data = await fetchGigs();
-        const approved = data.filter((g) => g.approved === true);
-        setGigs(approved);
+        const data = await fetchCalendarGigs();
+        setGigs(data);
         console.log("refreshed")
       } catch (err) {
         console.error("Calendar fetch err:", err);

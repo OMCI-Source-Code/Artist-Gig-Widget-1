@@ -16,7 +16,6 @@ export default function WidgetArtist() {
 
   const params = new URLSearchParams(location.search);
   const artistId = params.get("artistUId");
-  //console.log(artistId)
   const view = params.get("view") || "list";
 
   useEffect(() => {
@@ -27,7 +26,6 @@ export default function WidgetArtist() {
           return;
         }
         const data = await fetchArtistGigs(artistId);
-        console.log("Fetched gigs:", data);
         setGigs(data);
       } catch (err) {
         console.error("Failed to load gigs:", err);

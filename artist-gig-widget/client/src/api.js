@@ -4,12 +4,13 @@ function getQueryParam(name) {
   return new URL(window.location.href).searchParams.get(name);
 }
 
-let base =
-  getQueryParam("api") ||
-  window.GIG_WIDGET_API ||
-  import.meta.env.VITE_API_URL ||
-  "http://localhost:4000/api" //"https://artist-gig-widget-server.onrender.com/api";
+// let base =
+//   getQueryParam("api") ||
+//   window.GIG_WIDGET_API ||
+//   import.meta.env.VITE_API_URL ||
+//   "http://localhost:4000/api" //"https://artist-gig-widget-server.onrender.com/api";
 
+let base = "http://localhost:4000/api";
 console.log("API_URL:", base);
 
 export async function apiFetch(path, options = {}) {
@@ -60,7 +61,7 @@ export const fetchPublicGigs = () => apiFetch("/gigs/public");
 export const adminGigsFetch = () => apiFetch("/gigs/admin/gigs");
 export const resetPassword = ({ password, resetToken }) => apiFetch("/auth/reset-password", { method: "POST", body: JSON.stringify({ password, resetToken }),});
 export const forgotPassword  = (email) => apiFetch("/auth/forgot-password", { method: "POST", body: JSON.stringify({ email }) });
-
+export const fetchCalendarGigs = () => apiFetch("/gigs/calendar");
 
 export const fetchMe         = () => apiFetch("/auth/me");
 export const register        = (artist) => apiFetch("/auth/register", { method: "POST", body: JSON.stringify(artist) });

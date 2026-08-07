@@ -6,7 +6,7 @@ import RSS from "rss";
 import fs from "fs";
 
 const getPublicGigs = async () => {
-  try{
+  try {
     const { rows } = await query(
       `SELECT gigs.*, artists.artist_name AS artist_name, artists.website AS artist_website
       FROM gigs 
@@ -20,7 +20,7 @@ const getPublicGigs = async () => {
       ORDER BY gigs.date_time ASC;`
     );
     return rows
-  }catch (err) {
+  } catch (err) {
     console.error("Error fetching public gigs:", err);
   }
 }
@@ -256,7 +256,7 @@ router.get("/events", async (req, res) => {
       items: gigs.map((gig) => ({
         id: gig.id,
         title: `${gig.artist_name} - ${gig.title} @ ${gig.venue}`,
-    content_text : `${gig.description} ${gig.age_restriction ? `- Age Restriction: ${gig.age_restriction}` : ""}`,
+        content_text: `${gig.description} ${gig.age_restriction ? `- Age Restriction: ${gig.age_restriction}` : ""}`,
         date_published: gig.date_time,
         artist:
         {
@@ -300,7 +300,7 @@ router.get("/rss", async (req, res) => {
 
     res.set("Content-Type", "text/xml");
     res.send(feed.xml());
-    
+
   } catch (err) {
     console.error("Error fetching public gigs:", err);
     res.status(500).json({ error: "Failed to fetch gigs" });
@@ -336,8 +336,8 @@ router.get("/user/:id", async (req, res) => {
   }
 });
 
-router.get("/admin/gigs", async (req, res) =>{
-  try{
+router.get("/admin/gigs", async (req, res) => {
+  try {
     const { rows } = await query(
       `SELECT gigs.*, artists.artist_name AS artist_name, artists.website AS artist_website
       FROM gigs 
@@ -347,12 +347,33 @@ router.get("/admin/gigs", async (req, res) =>{
       ON users.id = artists.user_id
       ORDER BY gigs.date_time ASC;
       `
-    ); 
+    );
     res.json(rows);
-  }catch(err){
+  } catch (err) {
     console.log("Error Fetching Gigs - ", err)
-    res.status(500).json({error: "Failed to fetch gigs", err})
+    res.status(500).json({ error: "Failed to fetch gigs", err })
   }
 })
+
+router.get("/calendar", async (req, res) => {
+  try {
+    const { rows } = await query(
+      `SELECT gigs.*, artists.artist_name AS artist_name, artists.website AS artist_website
+      FROM gigs
+      LEFT JOIN users
+      ON gigs.created_by_user_id = users.id
+      LEFT JOIN artists
+      ON users.id = artists.user_id
+      WHERE gigs.approved = true
+      AND gigs.share_with_coop = true
+      ORDER BY gigs.date_time ASC;`
+    );
+    console.log(rows)
+    res.json(rows);
+  } catch (err) {
+    console.log("Error Fetching Gigs - ", err)
+    res.status(500).json({ error: "Failed to fetch gigs", err })
+  }
+});
 
 export default router;
