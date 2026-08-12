@@ -15,7 +15,6 @@ import "./styles/global.css";
 
 export default function App() {
   const { user, logout } = useAuth();
-  console.log(user)
 
   return (
     <div className="container">

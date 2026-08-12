@@ -115,7 +115,59 @@ code, pre {
   overflow-x: auto;
 }
 
+/* ======================================
+   Loading Overlay
+====================================== */
 
+.loading-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0,0,0,.88);
+    border-radius: 18px;
+    backdrop-filter: blur(5px);
+    z-index: 20;
+}
+
+.loading-card {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:18px;
+}
+
+.loading-logo {
+    color:#d9ae4c;
+    font-size:2rem;
+    margin:0;
+    letter-spacing:1px;
+}
+
+.loading-text {
+    color:#fff;
+    margin:0;
+    font-size:1rem;
+}
+
+.loading-spinner {
+    width:55px;
+    height:55px;
+    border-radius:50%;
+    border:5px solid #333;
+    border-top-color:#d9ae4c;
+    animation:spin .9s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}
 /* ===== Mobile ===== */
 @media (max-width: 768px) {
 

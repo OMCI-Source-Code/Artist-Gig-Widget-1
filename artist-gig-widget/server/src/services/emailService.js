@@ -23,9 +23,8 @@ export async function sendGigMadeEmail(gig) {
 
   const mailOptions = {
     from: process.env.SMTP_MAIL,
-    to: "joshua.deirish@canadianmusicians.coop",
+    to: "gigboard.admin@canadianmusicians.coop",
     subject: "🎵 New Gig Awaiting Approval",
-    //designed with ai cuz i'm lazy
     html: `
   <body style="margin:0;padding:0;background-color:#111827;font-family:Arial,Helvetica,sans-serif;color:#f9fafb;">
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="padding:40px 20px;background-color:#111827;">

@@ -1,17 +1,17 @@
-// client/src/pages/WidgetGlobal.jsx
 import React, { useEffect, useState } from "react";
 import { fetchPublicGigs } from "../api";
 import "../styles/globalWidget.css";
+import LoadingOverlay from "./LoadingOverlay";
 
 export default function WidgetGlobal() {
   const [gigs, setGigs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("upcoming"); 
+  const [filter, setFilter] = useState("upcoming");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("soonest");
   const [startDate, setStartDate] = useState("");
 
-  useEffect(() => { 
+  useEffect(() => {
     async function load() {
       try {
         const data = await fetchPublicGigs();
@@ -26,65 +26,67 @@ export default function WidgetGlobal() {
   }, []);
 
 
-// Define max height 
-const MAX_HEIGHT = 600;
+  // Define max height 
+  const MAX_HEIGHT = 600;
 
-useEffect(() => {
-  function sendHeight() {
-    const widget = document.querySelector(".gig-widget");
-    if (widget) {
-      const height = Math.min(widget.scrollHeight, MAX_HEIGHT);
-      window.parent.postMessage({ type: "resizeWidget", height }, "*");
+  useEffect(() => {
+    function sendHeight() {
+      const widget = document.querySelector(".gig-widget");
+      if (widget) {
+        const height = Math.min(widget.scrollHeight, MAX_HEIGHT);
+        window.parent.postMessage({ type: "resizeWidget", height }, "*");
+      }
     }
+
+    sendHeight();
+
+    window.addEventListener("resize", sendHeight);
+    return () => window.removeEventListener("resize", sendHeight);
+  }, [gigs, filter, search, sort, startDate]);
+
+
+  function applyFilter(gigs) {
+    const now = new Date();
+    let result = [...gigs];
+
+
+
+    if (filter === "upcoming") {
+      result = result.filter((g) => new Date(g.date_time) >= now);
+    } else if (filter === "past") {
+      result = result.filter((g) => new Date(g.date_time) < now);
+    }
+
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      result = result.filter(
+        (g) =>
+          g.title.toLowerCase().includes(q) ||
+          g.venue.toLowerCase().includes(q) ||
+          g.artist_name.toLowerCase().includes(q) ||
+          (g.description || "").toLowerCase().includes(q) ||
+          (g.directions || "").toLowerCase().includes(q)
+      );
+    }
+
+    if (startDate) {
+      const chosen = new Date(startDate);
+      result = result.filter((g) => new Date(g.date_time) >= chosen);
+    }
+
+    if (sort === "soonest") {
+      result.sort((a, b) => new Date(a.date_time) - new Date(b.date_time));
+    } else if (sort === "latest") {
+      result.sort((a, b) => new Date(b.date_time) - new Date(a.date_time));
+    }
+
+    return result;
   }
 
-  sendHeight();
 
-  window.addEventListener("resize", sendHeight);
-  return () => window.removeEventListener("resize", sendHeight);
-}, [gigs, filter, search, sort, startDate]);
-
-
- function applyFilter(gigs) {
-  const now = new Date();
-  let result = [...gigs];
-
-
-
-  if (filter === "upcoming") {
-    result = result.filter((g) => new Date(g.date_time) >= now);
-  } else if (filter === "past") {
-    result = result.filter((g) => new Date(g.date_time) < now);
+  if (loading) {
+    return <LoadingOverlay message="Loading Gigs..." />
   }
-
-  if (search.trim()) {
-    const q = search.toLowerCase();
-    result = result.filter(
-      (g) =>
-        g.title.toLowerCase().includes(q) ||
-        g.venue.toLowerCase().includes(q) ||
-        g.artist_name.toLowerCase().includes(q) ||
-        (g.description || "").toLowerCase().includes(q) ||
-        (g.directions || "").toLowerCase().includes(q)
-    );
-  }
-
-  if (startDate) {
-    const chosen = new Date(startDate);
-    result = result.filter((g) => new Date(g.date_time) >= chosen);
-  }
-
-  if (sort === "soonest") {
-    result.sort((a, b) => new Date(a.date_time) - new Date(b.date_time));
-  } else if (sort === "latest") {
-    result.sort((a, b) => new Date(b.date_time) - new Date(a.date_time));
-  }
-
-  return result;
-}
-
-
-  if (loading) return <div className="loading">Loading gigs…</div>;
   if (!gigs.length) return <div className="empty">No Gigs Scheduled.</div>;
 
   const filtered = applyFilter(gigs);

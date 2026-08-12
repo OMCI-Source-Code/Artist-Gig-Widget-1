@@ -7,6 +7,8 @@ import "./../styles/auth.css";
 
 export default function Login() {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState("");
 
   const [form, setForm] = useState({ email: '', password: '' });
   const [formErrors, setFormErrors] = useState({})
@@ -15,9 +17,6 @@ export default function Login() {
   const [forgotPWMessage, setForgotPWMessage] = useState('')
 
   const { login } = useAuth();
-
-
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,7 +27,7 @@ export default function Login() {
 
     if (Object.keys(errors).length > 0) return;
     try {
-      console.log(form)
+      setLoading(true);
       const res = await apiLogin({
         email: form.email,
         password: form.password,
@@ -39,8 +38,8 @@ export default function Login() {
         setFormErrors({ api: "Invalid email or password" });
         return;
       }
-      console.log("login res token")
       login(res.token);
+      console.log(res.user.user_role)
 
       if (res.user.user_role === "artist") {
         navigate("/dashboard");
@@ -65,15 +64,14 @@ export default function Login() {
 
     try {
       const res = // route to update password
-      
-      setForgotPWMessage("Password Reset Email Sent")
+
+        setForgotPWMessage("Password Reset Email Sent")
     } catch (err) {
       setFormErrors({ api: "Invalid email or password" });
     }
   }
 
   useEffect(() => {
-    console.log(formErrors)
     if (Object.keys(formErrors).length === 0 && isSubmit) {
       console.log(form)
     }
@@ -101,63 +99,60 @@ export default function Login() {
     <div className="auth-page">
       <div className="auth-card">
 
-          <div>
-            <h2>Welcome Back</h2>
-            <form className="auth-form" onSubmit={handleSubmit}>
+        <div>
+          <h2>Welcome Back</h2>
+          <form className="auth-form" onSubmit={handleSubmit}>
 
-              <input
-                type="email"
-                placeholder="Email"
-                value={form.email}
-                onChange={e =>
-                  setForm({ ...form, email: e.target.value })
-                }
-              />
+            <input
+              type="email"
+              placeholder="Email"
+              value={form.email}
+              onChange={e =>
+                setForm({ ...form, email: e.target.value })
+              }
+            />
 
-              {formErrors.email && (
-                <p className="error">{formErrors.email}</p>
-              )}
+            {formErrors.email && (
+              <p className="error">{formErrors.email}</p>
+            )}
 
-              <input
-                type="password"
-                placeholder="Password"
-                value={form.password}
-                onChange={e =>
-                  setForm({ ...form, password: e.target.value })
-                }
-              />
+            <input
+              type="password"
+              placeholder="Password"
+              value={form.password}
+              onChange={e =>
+                setForm({ ...form, password: e.target.value })
+              }
+            />
 
-              {formErrors.password && (
-                <p className="error">{formErrors.password}</p>
-              )}
+            {formErrors.password && (
+              <p className="error">{formErrors.password}</p>
+            )}
 
-              {formErrors.api && (
-                <p className="error">{formErrors.api}</p>
-              )}
+            {formErrors.api && (
+              <p className="error">{formErrors.api}</p>
+            )}
 
-              <button type="submit">
-                Login
-              </button>
+            <button type="submit">
+              Login
+            </button>
 
-            </form>
+          </form>
 
+          <div className="auth-footer">
+            Don't have an account?{" "}
+            <Link to="/register">
+              Register
+            </Link>
+          </div>
+          <div className="auth-footer">
             <div className="auth-footer">
-              Don't have an account?{" "}
-              <Link to="/register">
-                Register
+              <Link to="/forgot-password">
+                Forgot Password?
               </Link>
             </div>
-            <div className="auth-footer">
-              <div className="auth-footer">
-    <Link to="/forgot-password">
-        Forgot Password?
-    </Link>
-</div>
-            </div>
           </div>
-
-
-
+        </div>
 
 
       </div>

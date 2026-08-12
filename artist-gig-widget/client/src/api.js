@@ -1,16 +1,14 @@
-
 function getQueryParam(name) {
   if (typeof window === "undefined") return null;
+
   return new URL(window.location.href).searchParams.get(name);
 }
 
-// let base =
-//   getQueryParam("api") ||
-//   window.GIG_WIDGET_API ||
-//   import.meta.env.VITE_API_URL ||
-//   "http://localhost:4000/api" //"https://artist-gig-widget-server.onrender.com/api";
+const base =
+  getQueryParam("api") ||
+  window.GIG_WIDGET_API ||
+  import.meta.env.VITE_API_URL;
 
-let base = "http://localhost:4000/api";
 console.log("API_URL:", base);
 
 export async function apiFetch(path, options = {}) {
@@ -20,23 +18,26 @@ export async function apiFetch(path, options = {}) {
     ...options,
     headers: {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(token
+        ? { Authorization: `Bearer ${token}` }
+        : {}),
       ...options.headers,
     },
   });
 
   let data;
+
   try {
     data = await res.json();
   } catch {
-    data = null; 
+    data = null;
   }
 
   if (!res.ok) {
     if (res.status === 401) {
-  localStorage.removeItem("token");
-  throw new Error("Unauthorized");
-}
+      localStorage.removeItem("token");
+      throw new Error("Unauthorized");
+    }
 
     const message =
       data?.error ||
@@ -49,23 +50,84 @@ export async function apiFetch(path, options = {}) {
   return data;
 }
 
-export const fetchAllGigs    = () => apiFetch("/gigs");
-export const fetchGigs       = () => apiFetch("/gigs/all");
-export const fetchMyGigs     = () => apiFetch("/gigs/mine");
-export const fetchArtistGigs = (id) => apiFetch(`/gigs/user/${id}`);
-export const createGig       = (gig) => apiFetch("/gigs", { method: "POST", body: JSON.stringify(gig) });
-export const updateGig       = (id, updates) => apiFetch(`/gigs/${id}`, { method: "PUT", body: JSON.stringify(updates) });
-export const deleteGig       = (id) => apiFetch(`/gigs/${id}`, { method: "DELETE" });
-export const fetchArtist     = (id) => apiFetch(`/artists/${id}`);
-export const fetchPublicGigs = () => apiFetch("/gigs/public");
-export const adminGigsFetch = () => apiFetch("/gigs/admin/gigs");
-export const resetPassword = ({ password, resetToken }) => apiFetch("/auth/reset-password", { method: "POST", body: JSON.stringify({ password, resetToken }),});
-export const forgotPassword  = (email) => apiFetch("/auth/forgot-password", { method: "POST", body: JSON.stringify({ email }) });
-export const fetchCalendarGigs = () => apiFetch("/gigs/calendar");
+export const fetchAllGigs =
+  () => apiFetch("/gigs");
 
-export const fetchMe         = () => apiFetch("/auth/me");
-export const register        = (artist) => apiFetch("/auth/register", { method: "POST", body: JSON.stringify(artist) });
-export const login           = (creds)  => apiFetch("/auth/login", { method: "POST", body: JSON.stringify(creds) });
+export const fetchGigs =
+  () => apiFetch("/gigs/all");
+
+export const fetchMyGigs =
+  () => apiFetch("/gigs/mine");
+
+export const fetchArtistGigs =
+  (id) => apiFetch(`/gigs/user/${id}`);
+
+export const createGig =
+  (gig) =>
+    apiFetch("/gigs", {
+      method: "POST",
+      body: JSON.stringify(gig),
+    });
+
+export const updateGig =
+  (id, updates) =>
+    apiFetch(`/gigs/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(updates),
+    });
+
+export const deleteGig =
+  (id) =>
+    apiFetch(`/gigs/${id}`, {
+      method: "DELETE",
+    });
+
+export const fetchArtist =
+  (id) =>
+    apiFetch(`/artists/${id}`);
+
+export const fetchPublicGigs =
+  () => apiFetch("/gigs/public");
+
+export const adminGigsFetch =
+  () => apiFetch("/gigs/admin/gigs");
+
+export const resetPassword =
+  ({ password, resetToken }) =>
+    apiFetch("/auth/reset-password", {
+      method: "POST",
+      body: JSON.stringify({
+        password,
+        resetToken,
+      }),
+    });
+
+export const forgotPassword =
+  (email) =>
+    apiFetch("/auth/forgot-password", {
+      method: "POST",
+      body: JSON.stringify({ email }),
+    });
+
+export const fetchCalendarGigs =
+  () => apiFetch("/gigs/calendar");
+
+export const fetchMe =
+  () => apiFetch("/auth/me");
+
+export const register =
+  (artist) =>
+    apiFetch("/auth/register", {
+      method: "POST",
+      body: JSON.stringify(artist),
+    });
+
+export const login =
+  (creds) =>
+    apiFetch("/auth/login", {
+      method: "POST",
+      body: JSON.stringify(creds),
+    });
 
 export const logout = () => {
   localStorage.removeItem("token");

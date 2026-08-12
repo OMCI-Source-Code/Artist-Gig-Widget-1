@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { apiFetch } from "../api.js";
+import { apiFetch, fetchArtistGigs } from "../api.js";
 import Protected from "./ProtectedRoute.jsx";
 import GigForm from "./GigForm.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
@@ -28,7 +28,7 @@ function Inner() {
 
   async function load() {
     try {
-      const rows = await apiFetch("/gigs/mine");
+  const rows = await fetchArtistGigs(user.id);
       setGigs(rows);
     } catch (err) {
       console.error(err);
@@ -299,7 +299,17 @@ function Inner() {
 
       <hr style={{ margin: "24px 0" }} />
       <h3>Embed Snippets</h3>
-      <pre>{`<div data-gig-widget data-type="artist" data-artist-id="${artist?.id}" data-view="list"></div>
+      <h4>Floating Bubble Widget</h4>
+      <pre>{`<div data-gig-widget data-type="artist" data-artist-id="${user?.id}" data-view="list"></div>
+<script src="${WIDGET_ORIGIN}/embed.js"></script>`}</pre>
+      {showCopiedToast && (
+        <div className="toast">
+          Copied!
+        </div>
+      )}
+
+      <h4>List Widget</h4>
+      <pre>{`<div data-gig-widget data-type="artist" data-user-id="${user?.id}" data-view="list" data-display="inline"> </div>
 <script src="${WIDGET_ORIGIN}/embed.js"></script>`}</pre>
       {showCopiedToast && (
         <div className="toast">
