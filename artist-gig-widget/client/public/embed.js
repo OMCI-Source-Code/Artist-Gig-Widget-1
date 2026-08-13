@@ -26,7 +26,7 @@
       const apiOrigin =
         el.getAttribute("data-api") ||
         scriptApi ||
-        "https://api.gigboard.canadianmusicians.coop/api";
+        "https://artist-gig-widget-server.onrender.com/api";
 
       const type = el.getAttribute("data-type") || "public";
 

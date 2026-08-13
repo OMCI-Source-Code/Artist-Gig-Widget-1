@@ -71,7 +71,7 @@ export async function sendGigMadeEmail(gig) {
 
                 <!-- CTA -->
                 <div style="text-align:center;margin-top:32px;">
-                  <a href="https://artist-gig-widget.vercel.app/dashboard"
+                  <a href="https://gigboard.canadianmusicians.coop/admin-dashboard"
                     style="
                       display:inline-block;
                       background:#d9ae4c;
@@ -118,9 +118,9 @@ export async function sendGigMadeEmail(gig) {
 }
 
 export async function sendPasswordResetEmail(email, resetToken) {
-  const resetLink = `http://localhost:5173/reset-password?token=${resetToken}`;
+  //const resetLink = `http://localhost:5173/reset-password?token=${resetToken}`;
   console.log(resetLink);
-  //const resetLink = `https://artist-gig-widget.vercel.app/reset-password?token=${resetToken}`;
+  const resetLink = `https://gigboard.canadianmusicians.coop/reset-password?token=${resetToken}`;
   const mailOptions = {
     from: process.env.SMTP_MAIL,
     to: email,
